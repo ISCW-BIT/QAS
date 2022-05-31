@@ -69,8 +69,8 @@ def GetAnswer(request):
         current_question = Question.objects.filter(is_current = True)
 
         if not current_question.exists():
-
-            text_message = TextSendMessage("ร่วมกิจกรรมส่งเสริมการศึกษาพระประวัติและพระกรณียกิจ พระบิดาแห่งกองทัพอากาศ เปิดลงทะเบียนในระหว่าง 31 พ.ค. – 2 มิ.ย.65")
+            url = lineAPI["url_website"]
+            text_message = TextSendMessage(f"ร่วมกิจกรรมส่งเสริมการศึกษาพระประวัติและพระกรณียกิจ พระบิดาแห่งกองทัพอากาศ เปิดลงทะเบียนในระหว่าง 31 พ.ค. – 2 มิ.ย.65 ผ่านช่องทาง: {url}rtaf/")
             line_bot_api.reply_message(reply_token,text_message)
 
         if current_question.exists():
