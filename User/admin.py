@@ -11,7 +11,7 @@ class Question_Admin (admin.ModelAdmin):
     search_fields = ['name']
 
 class Choice_Admin (admin.ModelAdmin):
-    list_display = ['number','question','answer','correct']
+    list_display = ['number','answer','question','correct']
     list_filter = ['question']
     search_fields = ['answer']
 

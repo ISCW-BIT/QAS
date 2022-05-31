@@ -1,4 +1,4 @@
-#!d:\projects\django-projects\qas\env\scripts\python.exe
+#!D:\django\QAS\env\Scripts\python.exe
 # EASY-INSTALL-ENTRY-SCRIPT: 'future==0.18.2','console_scripts','pasteurize'
 import re
 import sys

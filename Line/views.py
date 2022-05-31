@@ -65,26 +65,49 @@ def GetAnswer(request):
         answer = data['events'][0]['message']['text']
         reply_token = data['events'][0]['replyToken']
 
+
         current_question = Question.objects.filter(is_current = True)
+
         if not current_question.exists():
 
             text_message = TextSendMessage("ร่วมกิจกรรมส่งเสริมการศึกษาพระประวัติและพระกรณียกิจ พระบิดาแห่งกองทัพอากาศ เปิดลงทะเบียนในระหว่าง 31 พ.ค. – 2 มิ.ย.65")
             line_bot_api.reply_message(reply_token,text_message)
-        current_question = current_question[0]
-        player = Player.objects.filter(lineid = user_id)
-        check_player = PlayerData.objects.filter(player = player.email, question = current_question) 
 
-        if check_player.exists() and player.state == StateChoice.FINISH:
-            text_message = TextSendMessage("คุณได้ตอบคำถามแล้ว ไม่สามารถตอบซ้ำได้")
-            line_bot_api.reply_message(reply_token,text_message)
+        if current_question.exists():
+            player = Player.objects.filter(line_id = user_id)
 
-            return None
+            if player.exists() and player[0].state == StateChoice.FINISH:
 
-        if answer not in ["1","2","3","4"] and player.state == StateChoice.FINISH:
-            text_message = TextSendMessage("กรุณาเลือกให้ถูกต้อง")
-            line_bot_api.reply_message(reply_token,text_message)
+                check_answer = PlayerData.objects.filter(player = player[0], question = current_question[0]) 
+                if check_answer.exists() and player[0].state == StateChoice.FINISH:
+                    text_message = TextSendMessage("คุณได้ตอบคำถามแล้ว ไม่สามารถตอบซ้ำได้")
+                    line_bot_api.reply_message(reply_token,text_message)
+                    return None
+                else:
+                    if answer in ["1","2","3","4"] and player[0].state == StateChoice.FINISH:
+                        choice_selected = Choice.objects.filter(question = current_question[0], number = int(answer))
+                        choice_check = Choice.objects.get(question = current_question[0], number = int(answer))
+                        print('choice_selected=',choice_selected)
 
-            return None
+                        if choice_check.correct == True :
+                            add_score = 1
+                        else :
+                            add_score = 0
+                        
+                        player_data = PlayerData(player = player[0], question = current_question[0] , choice_selected = choice_selected[0], score = add_score)
+                        player_data.save()
+                        reply_text = f'ได้รับคำตอบของท่านแล้ว\n ข้อที่ : {current_question[0].number} ตัวเลือกที่ : {choice_selected[0].number} {choice_selected[0].answer}'    
+                        text_message = TextSendMessage(reply_text)
+                        line_bot_api.reply_message(reply_token,text_message)
+                        return None     
+
+                    if answer not in ["1","2","3","4"] and player[0].state == StateChoice.FINISH:
+                        text_message = TextSendMessage("กรุณาเลือกคำตอบให้ถูกต้อง")
+                        line_bot_api.reply_message(reply_token,text_message)
+                        return None
+            else:
+                text_message = TextSendMessage("คุณยังไม่ได้ลงทะเบียน หรือ ลงทะเบียนไม่สมบูรณ์ กรุณาลงทะเบียนอีกครั้ง")
+                line_bot_api.reply_message(reply_token,text_message)
 
     return HttpResponse(request.method)
 
