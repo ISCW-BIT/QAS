@@ -31,7 +31,7 @@ def Register(request):
             InsertInfo.office_phone = work_phone
             InsertInfo.state = 3
             InsertInfo.save()
-            text_message = TextSendMessage("ลงทะเบียนเรียบร้อยแล้ว")
+            text_message = TextSendMessage("ลงทะเบียนเรียบร้อยแล้ว กิจกรรมจะเริ่มในวันพุธที่ 8 มิ.ย.65 เวลา 0900-1000")
             user_line_id = Player.objects.filter(email = rtaf_email).values("line_id")
             print(user_line_id)
             line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
