@@ -1,0 +1,81 @@
+{% extends "_base.html"%}
+{% load static %}
+{% block content %}
+<div class="container">
+  <div class="row">  
+    <div class="col" >
+      <h5 class="question_text">{{ display_q.0.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 1 %}"> คำถามข้อที่ : 1 </a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.1.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 2 %}"> คำถามข้อที่ : 2 </a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.2.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 3 %}"> คำถามข้อที่ : 3 </a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.3.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 4 %}"> คำถามข้อที่ : 4 </a>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col">
+      <h5 class="question_text">{{ display_q.4.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 5 %}"> คำถามข้อที่ : 5 </a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.5.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 6 %}"> คำถามข้อที่ : 6 </a> 
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.6.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 7 %}"> คำถามข้อที่ : 7 </a> 
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.7.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 8 %}"> คำถามข้อที่ : 8 </a>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col">
+      <h5 class="question_text">{{ display_q.8.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 9 %}"> คำถามข้อที่ :  9</a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.9.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 1 %}"> คำถามข้อที่ :  1</a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.10.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 11 %}"> คำถามข้อที่ : 11 </a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.11.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 12 %}"> คำถามข้อที่ :  12</a>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col">
+      <h5 class="question_text">{{ display_q.12.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 13 %}"> คำถามข้อที่ : 13 (สำรอง:1)</a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.13.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 14 %}"> คำถามข้อที่ :  14 (สำรอง:2)</a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.14.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 15 %}"> คำถามข้อที่ : 15 (สำรอง:3)</a>
+    </div>
+    <div class="col">
+      <h5 class="question_text">{{ display_q.15.name }}</h5>
+      <a class="btn btn-outline-secondary mt-3" href="{% url 'Line:Question' 16 %}"> คำถามข้อที่ : 16 (สำรอง:4)</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

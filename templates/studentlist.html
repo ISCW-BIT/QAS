@@ -1,0 +1,36 @@
+<h2>รายชื่อนักเรียนที่ลงทะเบียนเรียบร้อย</h2> 
+{% if not request.user.is_superuser %}
+    <h3>{{object_list.0.get_school_display}} : หน้า {{ page_obj.number }}</h3>
+{% endif %}
+{{ request.user.Profile.school}} <a href = "{% url 'logout'%}?next=/login">logout</a><br>
+{% if is_paginated %}
+    <ul class="pagination">
+    {% if page_obj.has_previous %}
+        <li>
+            <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+        </li>
+    {% endif %}
+        <li class="">
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+        </li>
+    {% if page_obj.has_next %}
+        <li>
+            <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+        </li>
+    {% endif %}
+    </ul>
+{% endif %}
+
+<ul>
+{% for student in object_list %}
+    <li>{{ forloop.counter }}. {{ student }}  
+        {% if request.user.is_superuser %}
+        [
+                {{ student.get_school_display }}
+                ]
+            {% endif %}
+    </li>
+{% empty %}
+    <li>ไม่มีนักเรียนลงทะเบียน</li>
+{% endfor %}
+</ul>
