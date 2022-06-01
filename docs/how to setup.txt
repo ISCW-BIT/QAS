@@ -1,0 +1,5 @@
+1. Change url in 4 point
+	- line_config.py
+	- rich menu
+	- line liff
+	- line messaging API
