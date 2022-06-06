@@ -29,6 +29,7 @@ class Player(models.Model):
     last_response = models.DateTimeField(auto_now = True)
     img = models.CharField(verbose_name='รูปภาพ', max_length=255, default="-")  
     created = models.DateTimeField(auto_now_add=True)
+    ready = models.BooleanField(verbose_name = "พร้อม", default = False)
 
     def is_idle(self):
         now = datetime.now(timezone.utc)
@@ -54,11 +55,12 @@ class Question (models.Model):
     name = models.CharField(verbose_name = "โจทย์" ,max_length=255, blank=True, null = True)
     img = models.ImageField(verbose_name= "รูปภาพ",upload_to ='uploads/')
     is_current = models.BooleanField(verbose_name = "คำถามปัจจุบัน", default = False)
+    send_time = models.DateTimeField(verbose_name="เวลาส่งคำถาม",null=True,blank=True)
     
 
 
     def __str__(self):
-        return f'{self.number}:{self.name}:{self.img}'
+        return f'{self.number}'
 
 # <---------------------------------------------------------------->
 
@@ -78,7 +80,7 @@ class Choice (models.Model):
     correct = models.BooleanField(verbose_name = "ถูก/ผิด", default=False ,null=True, blank=True)
 
     def __str__(self):
-        return f'{self.answer},{self.correct}'
+        return f'{self.answer}'
 
 # <---------------------------------------------------------------->
 

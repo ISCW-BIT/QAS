@@ -31,10 +31,10 @@ def Register(request):
             InsertInfo.office_phone = work_phone
             InsertInfo.state = 3
             InsertInfo.save()
-            text_message = TextSendMessage("ลงทะเบียนเรียบร้อยแล้ว กิจกรรมจะเริ่มในวันพุธที่ 8 มิ.ย.65 เวลา 0900-1000")
+            text_message = TextSendMessage(f"คุณได้ลงทะเบียนร่วมกิจกรรมด้วย อีเมล์ ทอ. {rtaf_email} เรียบร้อยแล้ว  กิจกรรมจะเริ่มในวันจันทร์ที่ 13 มิ.ย.65")
             user_line_id = Player.objects.filter(email = rtaf_email).values("line_id")
-            print(user_line_id)
             line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
+            del request.session['rtaf_email']
             return render(request,"register_done.html")
     else:
         return render(request,"rtaf-login.html")

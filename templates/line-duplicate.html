@@ -2,50 +2,55 @@
 {% load static %}
 {% block content %}
 <div class="wrapper">
- {% if email == "" %}
-    <p id="rtafemail">คุณยังไม่ได้ login กับ RTAF</p>
-    <meta http-equiv="REFRESH" content="0;url=../rtaf/auth">
- {% endif %}
-    <div class="profile-card js-profile-card">
-        <div class="profile-card__img">
-        <img id="line_img" alt="profile card">
-        </div>
+  <div class="profile-card js-profile-card">
+    <div class="profile-card__img">
+      <img id="line_img" src="https://www.bloggang.com/data/xiengyod/picture/1177265672.gif" alt="profile card">
+    </div>
 
     <div class="profile-card__cnt js-profile-cnt">
-        <div class="profile-card__name" id="displayName"></div>
-        <form method="POST" action="/rtaf/register">
-            {% csrf_token %}
-            <div class="profile-card__txt">RTAF Email: <strong>{{ data.email }}@rtaf.mi.th</strong></div>
-            <div class="profile-card__txt">{{ data.rank }}{{ data.fullname }}</div>
-            <div class="profile-card__txt">สังกัด: {{ data.unit }}</div>
-            <div class="profile-card-inf">
-                <div class="row">
-                    <div class="col">
-                      {% if data.office_phone == None %}
-                        <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="หมายเลขมือถือ" pattern="[0-9]{10}" required>
-                      {% endif %}
-                      {% if data.office_phone != None %}
-                        <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="หมายเลขมือถือ" pattern="[0-9]{10}" value="{{data.mobile}}" required>
-                      {% endif %}
-                    </div>
-                    <div class="col">
-                        {% if data.office_phone == None %}
-                          <input type="tel" class="form-control" id="work_phone" name="work_phone" 
-                          placeholder="เบอร์ 5 ตัว" pattern="[0-9]{5}" required>
-                        {% endif %}
-                        {% if data.office_phone != None %}
-                          <input type="tel" class="form-control" id="work_phone" name="work_phone" 
-                          placeholder="เบอร์ 5 ตัว" pattern="[0-9]{5}" value="{{data.office_phone}}" required>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+      <div class="profile-card__name" id="displayName"></div>
+      <div class="profile-card__name">ไลน์ของคุณถูกลงทะเบียนในระบบแล้ว</div>
+      <div class="profile-card-loc">
+        <span class="profile-card-loc__icon">
+          <svg class="icon"><use xlink:href="#icon-location"></use></svg>
+        </span>
+
+        <span class="profile-card-loc__txt">
+          เฉพาะบุคลากรกองทัพอากาศเท่านั้น
+        </span>
+      </div>
+
+          <form action="{% url 'User:authentication'%}">
             <div class="profile-card-ctr">
-                <button  type="submit" class="profile-card__button button--blue js-message-btn">ลงทะเบียน</button>
-            </div>
-        </form>
+                <button type="button" class="profile-card__button button--orange" onclick="liff.login();">เปลี่ยน LINE</button>
+
+           </div>
+          </form>
+
     </div>
-</div>
+
+    <div class="profile-card-message js-message">
+      <form class="profile-card-form">
+        <div class="profile-card-form__container">
+          <textarea placeholder="Say something..."></textarea>
+        </div>
+
+        <div class="profile-card-form__bottom">
+          <button class="profile-card__button button--blue js-message-close">
+            Send
+          </button>
+
+          <button class="profile-card__button button--gray js-message-close">
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      <div class="profile-card__overlay js-message-close"></div>
+    </div>
+
+  </div>
+
 </div>
 
 <svg hidden="hidden">
@@ -107,21 +112,6 @@
   <script src="https://static.line-scdn.net/liff/edge/versions/2.3.0/sdk.js"></script>
   
   <script>
-    function loadDoc(user_id,picture_url) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var response = JSON.parse(this.response);
-                if(response["data"] == "line used by other")
-                {
-                  window.location.replace("/line/duplicate")
-                }
-            }
-        };
-        xhttp.open("POST", "/line/liff", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("user_id="+user_id+"&picture_url="+picture_url+"&csrfmiddlewaretoken={{ csrf_token }}");
-    }
     function runApp() {
       liff.getProfile().then(profile => {
         picture_url = profile.pictureUrl;
@@ -130,7 +120,7 @@
 
         document.getElementById("line_img").src = picture_url;
         document.getElementById("displayName").innerHTML = display_name;
-        loadDoc(user_id,picture_url)
+
       }).catch();
     }
     liff.init({ liffId: "1657162735-lxG4x8rW" }, () => {

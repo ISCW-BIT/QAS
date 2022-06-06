@@ -11,7 +11,63 @@ from Line.line_config import line_config_info
 lineAPI = line_config_info()
 line_bot_api = LineBotApi(lineAPI["channel_access_token"])
 
-
+def FlexReady(question_number):
+  flex_message = FlexSendMessage(
+    alt_text= "พร้อมร่วมกิจกรรมหรือไม่",
+        contents={
+  "type": "bubble",
+  "hero": {
+    "type": "image",
+    "url": "https://www.ipswichfirst.com.au/wp-content/uploads/2020/04/Are-You-Ready.jpg",
+    "size": "full",
+    "aspectRatio": "20:15",
+    "aspectMode": "cover",
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+     {
+        "type": "text",
+        "text": f"คุณพร้อมร่วมกิจกรรมหรือยัง",
+        "weight": "bold",
+        "size": "lg",
+        "align": "center",
+        "contents": []
+      },
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "flex": 0,
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "button",
+        "action": {
+          "type": "message",
+          "label": "พร้อม ",
+          "text": "พร้อม"
+        },
+        "height": "sm",
+        "style": "primary"
+      },
+      {
+        "type": "button",
+        "action": {
+          "type": "message",
+          "label": "ไม่พร้อม ",
+          "text": "ไม่พร้อม"
+        },
+        "height": "sm",
+        "style": "primary"
+      },
+    ]
+  }
+}
+    )
+  return flex_message
 def FlexQuestion (question_number):
     question = Question.objects.get(number = question_number)
     question_text = str(question.name)
@@ -72,7 +128,7 @@ def FlexQuestion (question_number):
             "contents": [
               {
                 "type": "text",
-                "text": "ข้อที่ 1: ",
+                "text": "1: ",
                 "size": "sm",
                 "color": "#AAAAAA",
                 "flex": 1,
@@ -96,7 +152,7 @@ def FlexQuestion (question_number):
             "contents": [
               {
                 "type": "text",
-                "text": "ข้อที่ 2: ",
+                "text": "2: ",
                 "size": "sm",
                 "color": "#AAAAAA",
                 "flex": 1,
@@ -120,7 +176,7 @@ def FlexQuestion (question_number):
             "contents": [
               {
                 "type": "text",
-                "text": "ข้อที่ 3: ",
+                "text": "3: ",
                 "size": "sm",
                 "color": "#AAAAAA",
                 "flex": 1,
@@ -144,7 +200,7 @@ def FlexQuestion (question_number):
             "contents": [
               {
                 "type": "text",
-                "text": "ข้อที่ 4: ",
+                "text": "4: ",
                 "size": "sm",
                 "color": "#AAAAAA",
                 "flex": 1,

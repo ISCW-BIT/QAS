@@ -1,3 +1,4 @@
+from curses import flash
 import email
 import json
 import datetime
@@ -16,45 +17,56 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
-from .flex_q import FlexQuestion
+from .flex_q import FlexQuestion,FlexReady
 from .flex_t import FlexGroup, FlexSchool
 from User.models import Player, Choice , PlayerData, StateChoice, Question
 from Line.line_config import line_config_info
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.http import JsonResponse
 
 lineAPI = line_config_info()
 line_bot_api = LineBotApi(lineAPI["channel_access_token"])
 handler = WebhookHandler(lineAPI["user_id"])
 
+def DisplayLineDuplicate(request):
+    return render(request,'line-duplicate.html')
 
 def DisplayLineAuthen(request):
-    print("Display Line Login Page")
-    email = request.session['rtaf_email']
-    findPlayer = Player.objects.filter(email = email)
-    data = {"data" : findPlayer[0]}
-    return render(request,'line-login.html',data)
-    
+    if 'rtaf_email' in request.session:
+        email = request.session['rtaf_email']
+        findPlayer = Player.objects.filter(email = email)
+        data = {"data" : findPlayer[0]}
+        return render(request,'line-login.html',data)
+    else:
+        return render(request,'rtaf-login.html')
 def LineAuthen(request):
     if request.method == 'POST':
         user_line = request.POST.get("user_id")
         rtaf_email = request.session['rtaf_email']
         picture_url = request.POST.get("picture_url")
+        find_line_id = Player.objects.filter(line_id = user_line).values("line_id")
         find_player = Player.objects.filter(email = rtaf_email)
-        if find_player:
-            insert_line = Player.objects.get(email = rtaf_email)
-            insert_line.line_id = user_line
-            insert_line.img = picture_url
-            insert_line.state = 2
-            insert_line.save()
-            print("save line id")
-            return HttpResponse(request.method)
+        
+        if find_line_id.exists():
+            my_line = Player.objects.filter(email = rtaf_email,line_id = find_line_id[0]['line_id'])
+            if my_line:
+                return HttpResponse(request.method)
+            else:
+                data = {"data": "line used by other"}
+                return JsonResponse(data)               
         else:
-            print("not found Player")
-            return render(request,"rtaf-login.html")
+            if find_player:
+                insert_line = Player.objects.get(email = rtaf_email)
+                insert_line.line_id = user_line
+                insert_line.img = picture_url
+                insert_line.state = 2
+                insert_line.save()
+                HttpResponse(request.method)           
+            else:
+                return HttpResponse(request.method)
     else:
-        print("IT IS",request.method)
-        return render(request,"rtaf-login.html")
+        return HttpResponse(request.method)
 
 @csrf_exempt
 def GetAnswer(request):
@@ -64,18 +76,31 @@ def GetAnswer(request):
         user_id = data['events'][0]['source']['userId']
         answer = data['events'][0]['message']['text']
         reply_token = data['events'][0]['replyToken']
-
-
         current_question = Question.objects.filter(is_current = True)
+
+        if answer in ["พร้อม","ไม่พร้อม"]:
+            player = Player.objects.filter(line_id = user_id,state = StateChoice.FINISH)
+            if player.exists():
+                if answer == "พร้อม":
+                    player.ready = True
+                    text_message = TextSendMessage(f"คุณพร้อมร่วมกิจกรรมแล้ว กิจกรรมเริ่ม 13 มิ.ย. 65")
+                    line_bot_api.reply_message(reply_token,text_message)
+                if answer == "ไม่พร้อม":
+                    player = Player.objects.filter(line_id = user_id)
+                    player.ready = False
+                    text_message = TextSendMessage(f"คุณจะไม่สามารถเข้าร่วมกิจกรรมตอบคำถามได้")
+                    line_bot_api.reply_message(reply_token,text_message)
+            else:
+                text_message = TextSendMessage(f"กรุณาลงทะเบียนให้ครบถ้วนก่อน")
+                line_bot_api.reply_message(reply_token,text_message)
 
         if not current_question.exists():
             url = lineAPI["url_website"]
-            text_message = TextSendMessage(f"ร่วมกิจกรรมส่งเสริมการศึกษาพระประวัติและพระกรณียกิจ พระบิดาแห่งกองทัพอากาศ เปิดลงทะเบียนในระหว่าง 31 พ.ค. – 2 มิ.ย.65 ผ่านช่องทาง: {url}rtaf/")
+            text_message = TextSendMessage(f"ร่วมกิจกรรมส่งเสริมการศึกษาพระประวัติและพระกรณียกิจ พระบิดาแห่งกองทัพอากาศ เปิดลงทะเบียนใน 8 มิ.ย.65 เป็นต้นไป ผ่านช่องทาง: {url}rtaf/")
             line_bot_api.reply_message(reply_token,text_message)
 
         if current_question.exists():
             player = Player.objects.filter(line_id = user_id)
-
             if player.exists() and player[0].state == StateChoice.FINISH:
 
                 check_answer = PlayerData.objects.filter(player = player[0], question = current_question[0]) 
@@ -106,7 +131,7 @@ def GetAnswer(request):
                         line_bot_api.reply_message(reply_token,text_message)
                         return None
             else:
-                text_message = TextSendMessage("คุณยังไม่ได้ลงทะเบียน หรือ ลงทะเบียนไม่สมบูรณ์ กรุณาลงทะเบียนอีกครั้ง")
+                text_message = TextSendMessage(f"คุณยังไม่ได้ลงทะเบียน หรือ ลงทะเบียนไม่สมบูรณ์ กรุณาลงทะเบียนอีกครั้ง")
                 line_bot_api.reply_message(reply_token,text_message)
 
     return HttpResponse(request.method)
@@ -118,14 +143,24 @@ def Questions(request ,question_number = 0):
     if not request.user.is_superuser:
         html = "<html><body><a href = '{% url 'register_check'%}'>ตรวจสอบรายชื่อผู้ลงทะเบียน</a></body></html>" 
         return HttpResponse(html)
-    if question_number != 0 :
-        Send_Flex = FlexQuestion(question_number)
+
+    # Send Ready
+    if int(question_number) == 11:
+        Send_Flex = FlexReady(question_number)
         line_bot_api.broadcast(Send_Flex)
 
-        question = Question.objects.all()
-        question.update (is_current = False) 
-        question = Question.objects.filter(number = question_number)
-        question.update (is_current = True) 
+    # Send Question
+    if int(question_number) <= 10:
+        if question_number != 0:
+            Send_Flex = FlexQuestion(question_number)
+            player_ready = Player.objects.filter(ready = True)
+            for player in player_ready:
+                line_bot_api.push_message(player.line_id,Send_Flex)
+
+            question = Question.objects.all()
+            question.update (is_current = False) 
+            question = Question.objects.filter(number = question_number)
+            question.update (is_current = True) 
 
     data = {'display_q':display_q}
 
