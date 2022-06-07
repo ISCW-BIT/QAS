@@ -31,7 +31,14 @@ def Register(request):
             InsertInfo.office_phone = work_phone
             InsertInfo.state = 3
             InsertInfo.save()
-            text_message = TextSendMessage(f"คุณได้ลงทะเบียนร่วมกิจกรรมด้วย อีเมล์ ทอ. {rtaf_email} เรียบร้อยแล้ว  กิจกรรมจะเริ่มในวันจันทร์ที่ 13 มิ.ย.65")
+            emoji = [
+                {
+                    "index": 30,
+                    "productId": "5ac21a18040ab15980c9b43e",
+                    "emojiId": "007"
+                }
+            ]
+            text_message = TextSendMessage(text='ท่านได้ลงทะเบียนเรียบร้อยแล้ว $ สามารถร่วมกิจกรรมตอบคำถาม ในวันจันทร์ที่ 13 มิถุนายน 2565 เวลา 1400', emojis=emoji)
             user_line_id = Player.objects.filter(email = rtaf_email).values("line_id")
             line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
             del request.session['rtaf_email']

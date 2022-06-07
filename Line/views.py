@@ -92,7 +92,7 @@ def GetAnswer(request):
                     text_message = TextSendMessage(f"คุณจะไม่สามารถเข้าร่วมกิจกรรมตอบคำถามได้")
                     line_bot_api.reply_message(reply_token,text_message)
             else:
-                text_message = TextSendMessage(f"กรุณาลงทะเบียนให้ครบถ้วนก่อน")
+                text_message = TextSendMessage(f"กรุณาลงทะเบียนให้ครบถ้วนก่อนร่วมกิจกรรมตอบคำถาม")
                 line_bot_api.reply_message(reply_token,text_message)
 
         if not current_question.exists():
@@ -110,9 +110,20 @@ def GetAnswer(request):
                     line_bot_api.reply_message(reply_token,text_message)
                     return None
                 else:
-                    if answer in ["1","2","3","4"] and player[0].state == StateChoice.FINISH:
-                        choice_selected = Choice.objects.filter(question = current_question[0], number = int(answer))
-                        choice_check = Choice.objects.get(question = current_question[0], number = int(answer))
+                    if answer in ["ก","ข","ค","ง"] and player[0].state == StateChoice.FINISH:
+                        if answer == "ก":
+                            answer_num = 1
+                        if answer == "ข":
+                            answer_num = 2
+                        if answer == "ค":
+                            answer_num = 3
+                        if answer == "ง":
+                            answer_num = 4
+
+                        
+                        print("answer = ",answer_num)
+                        choice_selected = Choice.objects.filter(question = current_question[0], number = int(answer_num))
+                        choice_check = Choice.objects.get(question = current_question[0], number = int(answer_num))
                         print('choice_selected=',choice_selected)
 
                         if choice_check.correct == True :
@@ -122,12 +133,33 @@ def GetAnswer(request):
                         
                         player_data = PlayerData(player = player[0], question = current_question[0] , choice_selected = choice_selected[0], score = add_score)
                         player_data.save()
-                        reply_text = f'ได้รับคำตอบของท่านแล้ว\n ข้อที่ : {current_question[0].number} ตัวเลือกที่ : {choice_selected[0].number} {choice_selected[0].answer}'    
+                        if current_question[0].number == 1:
+                            question_thai = "๑"
+                        if current_question[0].number == 2:
+                            question_thai = "๒"
+                        if current_question[0].number == 3:
+                            question_thai = "๓"
+                        if current_question[0].number == 4:
+                            question_thai = "๔"
+                        if current_question[0].number == 5:
+                            question_thai = "๕"
+                        if current_question[0].number == 6:
+                            question_thai = "๖"
+                        if current_question[0].number == 7:
+                            question_thai = "๗"
+                        if current_question[0].number == 8:
+                            question_thai = "๘"
+                        if current_question[0].number == 9:
+                            question_thai = "๙"
+                        if current_question[0].number == 10:
+                            question_thai = "๑๐"
+
+                        reply_text = f'ได้รับคำตอบของท่านแล้ว\n คำถามข้อที่ : {question_thai}\n ตัวเลือก : {answer} {choice_selected[0].answer}'    
                         text_message = TextSendMessage(reply_text)
                         line_bot_api.reply_message(reply_token,text_message)
                         return None     
 
-                    if answer not in ["1","2","3","4"] and player[0].state == StateChoice.FINISH:
+                    if answer not in ["ก","ข","ค","ง"] and player[0].state == StateChoice.FINISH:
                         text_message = TextSendMessage("กรุณาเลือกคำตอบให้ถูกต้อง")
                         line_bot_api.reply_message(reply_token,text_message)
                         return None

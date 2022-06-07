@@ -74,7 +74,42 @@ def FlexQuestion (question_number):
     question_img = f'{lineAPI["url_website"]}{question.img}'
     print('question_img=',f'{question_img}')
 
+    if question.number == 1:
+      question.number = "๑"
+    elif question.number == 2:
+      question.number = "๒"
+    elif question.number == 3:
+      question.number = "๓"
+    elif question.number == 4:
+      question.number = "๔"
+    elif question.number == 5:
+      question.number = "๕"
+    elif question.number == 6:
+      question.number = "๖"
+    elif question.number == 7:
+      question.number = "๗"
+    elif question.number == 8:
+      question.number = "๘"
+    elif question.number == 9:
+      question.number = "๙"
+    elif question.number == 10:
+      question.number = "๑๐"
+
+
     choice = Choice.objects.filter(question = question).order_by('number')
+    if choice[0].number == 1:
+      choice1 =  str(choice[0].number)
+      choice1 = "ก"
+    if choice[1].number == 2:
+      choice2 =  str(choice[1].number)
+      choice2 = "ข"
+    if choice[2].number == 3:
+      choice3 =  str(choice[2].number)
+      choice3 = "ค"
+    if choice[3].number == 4:
+      choice4 =  str(choice[3].number)
+      choice4 = "ง"
+      
     flex_message = FlexSendMessage(
         alt_text= question_text,
         contents={
@@ -128,7 +163,7 @@ def FlexQuestion (question_number):
             "contents": [
               {
                 "type": "text",
-                "text": "1: ",
+                "text": "ก: ",
                 "size": "sm",
                 "color": "#AAAAAA",
                 "flex": 1,
@@ -152,7 +187,7 @@ def FlexQuestion (question_number):
             "contents": [
               {
                 "type": "text",
-                "text": "2: ",
+                "text": "ข: ",
                 "size": "sm",
                 "color": "#AAAAAA",
                 "flex": 1,
@@ -176,7 +211,7 @@ def FlexQuestion (question_number):
             "contents": [
               {
                 "type": "text",
-                "text": "3: ",
+                "text": "ค: ",
                 "size": "sm",
                 "color": "#AAAAAA",
                 "flex": 1,
@@ -200,7 +235,7 @@ def FlexQuestion (question_number):
             "contents": [
               {
                 "type": "text",
-                "text": "4: ",
+                "text": "ง: ",
                 "size": "sm",
                 "color": "#AAAAAA",
                 "flex": 1,
@@ -231,8 +266,8 @@ def FlexQuestion (question_number):
         "type": "button",
         "action": {
           "type": "message",
-          "label": f"ข้อที่ {str(choice[0].number)}",
-          "text": str(choice[0].number)
+          "label": f"ตัวเลือกที่ {choice1}",
+          "text": choice1
         },
         "height": "sm",
         "style": "primary"
@@ -241,8 +276,8 @@ def FlexQuestion (question_number):
         "type": "button",
         "action": {
           "type": "message",
-          "label": f"ข้อที่ {str(choice[1].number)}",
-          "text": str(choice[1].number)
+          "label": f"ตัวเลือกที่ {choice2}",
+          "text": choice2
         },
         "height": "sm",
         "style": "primary"
@@ -251,8 +286,8 @@ def FlexQuestion (question_number):
         "type": "button",
         "action": {
           "type": "message",
-          "label": f"ข้อที่ {str(choice[2].number)}",
-          "text": str(choice[2].number)
+          "label": f"ตัวเลือกที่ {choice3}",
+          "text": choice3
         },
         "style": "primary"
       },
@@ -260,8 +295,8 @@ def FlexQuestion (question_number):
         "type": "button",
         "action": {
           "type": "message",
-          "label": f"ข้อที่ {str(choice[3].number)}",
-          "text": str(choice[3].number)
+          "label": f"ตัวเลือกที่ {choice4}",
+          "text": choice4
         },
         "style": "primary"
       }

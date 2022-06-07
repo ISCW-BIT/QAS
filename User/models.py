@@ -130,8 +130,11 @@ class PlayerData (models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, null=True, verbose_name = "เวลาที่บันทึก")
 
     def time_score(self):
-        diff_time = self.timestamp - self.question.send_time
-        return int(diff_time.total_seconds())
+        if self.timestamp and self.question.send_time:
+            diff_time = self.timestamp - self.question.send_time
+            return int(diff_time.total_seconds())
+        else:
+            return 0
 
 class Raking(Player):
     class Meta:
