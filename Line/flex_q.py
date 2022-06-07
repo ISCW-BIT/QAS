@@ -266,7 +266,7 @@ def FlexQuestion (question_number):
         "type": "button",
         "action": {
           "type": "message",
-          "label": f"ตัวเลือกที่ {choice1}",
+          "label": f"ตัวเลือก: {choice1}",
           "text": choice1
         },
         "height": "sm",
@@ -276,7 +276,7 @@ def FlexQuestion (question_number):
         "type": "button",
         "action": {
           "type": "message",
-          "label": f"ตัวเลือกที่ {choice2}",
+          "label": f"ตัวเลือก: {choice2}",
           "text": choice2
         },
         "height": "sm",
@@ -286,7 +286,7 @@ def FlexQuestion (question_number):
         "type": "button",
         "action": {
           "type": "message",
-          "label": f"ตัวเลือกที่ {choice3}",
+          "label": f"ตัวเลือก: {choice3}",
           "text": choice3
         },
         "style": "primary"
@@ -295,7 +295,7 @@ def FlexQuestion (question_number):
         "type": "button",
         "action": {
           "type": "message",
-          "label": f"ตัวเลือกที่ {choice4}",
+          "label": f"ตัวเลือก: {choice4}",
           "text": choice4
         },
         "style": "primary"
