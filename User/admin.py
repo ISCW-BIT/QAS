@@ -1,8 +1,14 @@
+from pyexpat import model
 from django.contrib import admin
-from .models import Player,  Question, Choice, PlayerData
+from django.db.models import Sum,  Count
+from urllib3 import Retry
+from .models import Player,  Question, Choice, PlayerData, Raking
+from import_export.admin import ImportExportActionModelAdmin
 
-class Player_Admin (admin.ModelAdmin):
-    list_display = ['fullname','unit','email','mobile','office_phone','state']
+
+
+class Player_Admin (ImportExportActionModelAdmin):
+    list_display = ['fullname','unit','email','mobile','office_phone','state','total_score','time_score']
     search_fields = ['fullname']
 
 
@@ -16,9 +22,12 @@ class Choice_Admin (admin.ModelAdmin):
     search_fields = ['answer']
 
 class PlayerData_Admin (admin.ModelAdmin):
-    list_display = ['player','question','choice_selected','score','timestamp']
+    list_display = ['player','question','choice_selected','score','time_score', 'timestamp']
     search_fields = ['score']
 
+class Ranking_Admin(admin.ModelAdmin):
+    list_display = ['fullname','total_score','time_score']
+admin.site.register(Raking,Ranking_Admin)
 admin.site.register(Player, Player_Admin)
 
 admin.site.register(Choice, Choice_Admin)

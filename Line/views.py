@@ -1,8 +1,7 @@
-from curses import flash
 import email
 import json
-import datetime
 
+from django.utils import timezone
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
@@ -81,13 +80,15 @@ def GetAnswer(request):
         if answer in ["พร้อม","ไม่พร้อม"]:
             player = Player.objects.filter(line_id = user_id,state = StateChoice.FINISH)
             if player.exists():
+                update_player = Player.objects.get(line_id = user_id,state = StateChoice.FINISH)
                 if answer == "พร้อม":
-                    player.ready = True
+                    update_player.ready = True
+                    update_player.save()
                     text_message = TextSendMessage(f"คุณพร้อมร่วมกิจกรรมแล้ว กิจกรรมเริ่ม 13 มิ.ย. 65")
                     line_bot_api.reply_message(reply_token,text_message)
                 if answer == "ไม่พร้อม":
-                    player = Player.objects.filter(line_id = user_id)
-                    player.ready = False
+                    update_player.ready = False
+                    update_player.save()
                     text_message = TextSendMessage(f"คุณจะไม่สามารถเข้าร่วมกิจกรรมตอบคำถามได้")
                     line_bot_api.reply_message(reply_token,text_message)
             else:
@@ -155,8 +156,11 @@ def Questions(request ,question_number = 0):
             Send_Flex = FlexQuestion(question_number)
             player_ready = Player.objects.filter(ready = True)
             for player in player_ready:
+                print(player.line_id)
                 line_bot_api.push_message(player.line_id,Send_Flex)
-
+            send_time = Question.objects.get(number = question_number)
+            send_time.send_time = timezone.now()
+            send_time.save()
             question = Question.objects.all()
             question.update (is_current = False) 
             question = Question.objects.filter(number = question_number)

@@ -1,10 +1,10 @@
 from datetime import datetime, timezone
 import re
-from turtle import position
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from django.contrib import admin
+from django.db.models import Sum,  Count
 
 
 
@@ -41,6 +41,23 @@ class Player(models.Model):
         print('diff_minute=',diff_minute)
 
         return diff_minute > 2
+    
+    @property
+    def total_score(self):
+        test = self.answer.aggregate(Sum('score'))
+        if test["score__sum"]:
+            return test["score__sum"]
+        else:
+            return 0
+    @property
+    def time_score(self):
+        player_answer = self.answer.all()
+        
+        if player_answer.exists():
+            total_time_score = sum([ts.time_score() for ts in player_answer])
+            return total_time_score
+        else:
+            return 0
 
     def __str__(self):
         return f'{self.fullname}'
@@ -93,7 +110,7 @@ class PlayerData (models.Model):
         null=True,
         blank=True,
         on_delete = models.SET_NULL,
-        related_name='ผู้ลงทะเบียน') 
+        related_name='answer') 
 
     question = models.ForeignKey(
         Question,
@@ -111,6 +128,15 @@ class PlayerData (models.Model):
 
     score = models.IntegerField(verbose_name="คะแนน", null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, null=True, verbose_name = "เวลาที่บันทึก")
+
+    def time_score(self):
+        diff_time = self.timestamp - self.question.send_time
+        return int(diff_time.total_seconds())
+
+class Raking(Player):
+    class Meta:
+        proxy = True
+        verbose_name =  verbose_name_plural = "คำนวนคะแนน"
 
 
 

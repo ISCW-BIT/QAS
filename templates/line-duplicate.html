@@ -22,7 +22,7 @@
 
           <form action="{% url 'User:authentication'%}">
             <div class="profile-card-ctr">
-                <button type="button" class="profile-card__button button--orange" onclick="liff.login();">เปลี่ยน LINE</button>
+                <button type="button" class="profile-card__button button--orange" onclick="changeAccount();">เปลี่ยน LINE</button>
 
            </div>
           </form>
@@ -112,6 +112,11 @@
   <script src="https://static.line-scdn.net/liff/edge/versions/2.3.0/sdk.js"></script>
   
   <script>
+    function changeAccount()
+    {
+      liff.logout();
+      liff.login();
+    }
     function runApp() {
       liff.getProfile().then(profile => {
         picture_url = profile.pictureUrl;
@@ -123,7 +128,7 @@
 
       }).catch();
     }
-    liff.init({ liffId: "1657162735-lxG4x8rW" }, () => {
+    liff.init({ liffId: "1657196654-1m7xrmEm" }, () => {
       if (liff.isLoggedIn()) {
         runApp()
       } else {
