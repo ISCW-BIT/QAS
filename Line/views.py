@@ -148,11 +148,6 @@ def GetAnswer(request):
 
                 if answer.startswith(("ก", "ข", "ค", "ง")):
                     check_answer = PlayerData.objects.filter(player = player[0], question = current_question[0]) 
-                    # if check_answer.exists() and player[0].state == StateChoice.FINISH:
-                    #     text_message = TextSendMessage("คุณได้ตอบคำถามแล้ว ไม่สามารถตอบซ้ำได้")
-                    #     line_bot_api.reply_message(reply_token,text_message)
-                    #     return None
-                    # else:
                     answer = answer.split("-")
                     question = arabic_convert(answer[1])
                     answer = answer[0]

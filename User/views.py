@@ -15,8 +15,10 @@ line_bot_api = LineBotApi(lineAPI["channel_access_token"])
 
 @login_required
 def DisplayUnits(request):
-    Players = Player.objects.values("unit").annotate(count=Count('unit'))
-    data = {"Players" : Players}
+    players = Player.objects.values("unit").annotate(count=Count('unit')).order_by('count')
+    all_player = Player.objects.count()
+    data = {"players" : players,
+            "all_player": all_player}
     return render(request,'unit.html',data)
 
 def DisplayRanking(request):
@@ -86,6 +88,7 @@ def RTAFLogin(request):
                 return render(request,'line-login.html',data)
         else:
             data = {"message" : RTAFAuth['result']}
+            print(data)
             return render(request, 'rtaf-error.html',data)
     else:
         return render(request, 'rtaf-login.html')
