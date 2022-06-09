@@ -8,8 +8,11 @@ from import_export.admin import ImportExportActionModelAdmin
 
 
 class Player_Admin (ImportExportActionModelAdmin):
-    list_display = ['fullname','unit','email','mobile','office_phone','state','total_score','time_score']
+    list_editable = ['score','time']
+    list_display = ['fullname','unit','email','mobile','office_phone','state','score','time']
     search_fields = ['fullname']
+    ordering = ['-score','time']
+    list_per_page = 120
 
 
 class Question_Admin (admin.ModelAdmin):

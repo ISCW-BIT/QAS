@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import datetime
+from django.utils import timezone
 import re
 
 from django.db import models
@@ -30,6 +31,8 @@ class Player(models.Model):
     img = models.CharField(verbose_name='รูปภาพ', max_length=255, default="-")  
     created = models.DateTimeField(auto_now_add=True)
     ready = models.BooleanField(verbose_name = "พร้อม", default = False)
+    score = models.IntegerField(verbose_name="คะแนนรวม", null=True, blank=True, default=0)
+    time = models.IntegerField(verbose_name="เวลารวม", null=True, blank=True,default=0)
 
     def is_idle(self):
         now = datetime.now(timezone.utc)
@@ -44,9 +47,9 @@ class Player(models.Model):
     
     @property
     def total_score(self):
-        test = self.answer.aggregate(Sum('score'))
-        if test["score__sum"]:
-            return test["score__sum"]
+        score = self.answer.aggregate(Sum('score'))
+        if score["score__sum"]:
+            return score["score__sum"]
         else:
             return 0
     @property
@@ -128,13 +131,27 @@ class PlayerData (models.Model):
 
     score = models.IntegerField(verbose_name="คะแนน", null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, null=True, verbose_name = "เวลาที่บันทึก")
-    
+
     def time_score(self):
         if self.timestamp and self.question.send_time:
             diff_time = self.timestamp - self.question.send_time
             return int(diff_time.total_seconds())
         else:
             return 0
+
+    def save(self, *args, **kwargs):
+        diff_time = timezone.now() - self.question.send_time
+        print(timezone.now())
+        print(self.question.send_time)
+        print("Sum = ",diff_time.total_seconds())
+        self.player.time += int(diff_time.total_seconds())
+        if self.score == 1:
+            self.player.score += 1
+
+        self.player.save()
+        
+        super(PlayerData, self).save(*args, **kwargs)
+
 
 class Raking(Player):
     class Meta:
