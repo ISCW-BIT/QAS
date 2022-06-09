@@ -215,10 +215,8 @@ def GetAnswer(request):
 def Questions(request ,question_number = 0):
     display_q = Question.objects.all()
     if not request.user.is_superuser:
-        Players = Player.objects.values("unit").annotate(count=Count('unit'))
-        data = {"Players" : Players}
         # return redirect('admin:index')
-        return render(request,'unit.html',data)
+        return redirect('/units/')
 
     # Send Ready
     if int(question_number) == 11:
