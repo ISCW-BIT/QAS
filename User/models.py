@@ -128,7 +128,7 @@ class PlayerData (models.Model):
 
     score = models.IntegerField(verbose_name="คะแนน", null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, null=True, verbose_name = "เวลาที่บันทึก")
-
+    
     def time_score(self):
         if self.timestamp and self.question.send_time:
             diff_time = self.timestamp - self.question.send_time

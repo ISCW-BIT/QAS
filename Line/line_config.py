@@ -6,7 +6,7 @@ def line_config_info():
     # liff endpoint
     # Webhook URL in Line Messaging API
     # line url = register_done.html 
-    url_website = "https://f678-110-169-222-26.ap.ngrok.io/"
+    url_website = "https://5048-122-155-138-34.ap.ngrok.io/"
     line_data = {"channel_access_token":channel_access_token,
     "user_id" : user_id,
     "url_website": url_website}

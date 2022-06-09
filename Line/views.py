@@ -1,6 +1,6 @@
-import email
 import json
 
+from django.db.models import Count
 from django.utils import timezone
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -10,11 +10,6 @@ from django.http import HttpResponse
 
 from linebot.models import *
 from linebot import *
-from io import BytesIO
-
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
 
 from .flex_q import FlexQuestion,FlexReady
 from .flex_t import FlexGroup, FlexSchool
@@ -67,6 +62,53 @@ def LineAuthen(request):
     else:
         return HttpResponse(request.method)
 
+def arabic_convert(number):
+    if number == "๑":
+        number = 1
+    if number == "๒":
+        number = 2
+    if number == "๓":
+        number = 3
+    if number == "๔":
+        number = 4
+    if number == "๕":
+        number = 5
+    if number == "๖":
+        number = 6
+    if number == "๗":
+        number = 7
+    if number == "๘":
+        number = 8
+    if number == "๙":
+        number = 9
+    if number == "๑๐":
+        number = 10
+    return number
+
+def ThaiNum_convert(number):
+    if number == 1:
+        number = "๑"
+    if number == 2:
+        number = "๒"
+    if number == 3:
+        number = "๓"
+    if number == 4:
+        number = "๔"
+    if number == 5:
+        number = "๕"
+    if number == 6:
+        number = "๖"
+    if number == 7:
+        number = "๗"
+    if number == 8:
+        number = "๘"
+    if number == 9:
+        number = "๙"
+    if number == 10:
+        number = "๑๐"
+    return number
+
+
 @csrf_exempt
 def GetAnswer(request):
     data = {}
@@ -104,65 +146,64 @@ def GetAnswer(request):
             player = Player.objects.filter(line_id = user_id)
             if player.exists() and player[0].state == StateChoice.FINISH:
 
-                check_answer = PlayerData.objects.filter(player = player[0], question = current_question[0]) 
-                if check_answer.exists() and player[0].state == StateChoice.FINISH:
-                    text_message = TextSendMessage("คุณได้ตอบคำถามแล้ว ไม่สามารถตอบซ้ำได้")
-                    line_bot_api.reply_message(reply_token,text_message)
-                    return None
-                else:
-                    if answer in ["ก","ข","ค","ง"] and player[0].state == StateChoice.FINISH:
-                        if answer == "ก":
-                            answer_num = 1
-                        if answer == "ข":
-                            answer_num = 2
-                        if answer == "ค":
-                            answer_num = 3
-                        if answer == "ง":
-                            answer_num = 4
+                if answer.startswith(("ก", "ข", "ค", "ง")):
+                    check_answer = PlayerData.objects.filter(player = player[0], question = current_question[0]) 
+                    # if check_answer.exists() and player[0].state == StateChoice.FINISH:
+                    #     text_message = TextSendMessage("คุณได้ตอบคำถามแล้ว ไม่สามารถตอบซ้ำได้")
+                    #     line_bot_api.reply_message(reply_token,text_message)
+                    #     return None
+                    # else:
+                    answer = answer.split("-")
+                    question = arabic_convert(answer[1])
+                    answer = answer[0]
+                    if question == current_question[0].number:
+                        if check_answer.exists() and player[0].state == StateChoice.FINISH:
+                            text_message = TextSendMessage("คุณได้ตอบคำถามแล้ว ไม่สามารถตอบซ้ำได้")
+                            line_bot_api.reply_message(reply_token,text_message)
+                            return None
+                        else:
+                            if answer in ["ก","ข","ค","ง"] and player[0].state == StateChoice.FINISH:
+                                if answer == "ก":
+                                    answer_num = 1
+                                if answer == "ข":
+                                    answer_num = 2
+                                if answer == "ค":
+                                    answer_num = 3
+                                if answer == "ง":
+                                    answer_num = 4
+                                choice_selected = Choice.objects.filter(question = current_question[0], number = int(answer_num))
+                                choice_check = Choice.objects.get(question = current_question[0], number = int(answer_num))
+                                print('choice_selected=',choice_selected)
 
-                        
-                        print("answer = ",answer_num)
-                        choice_selected = Choice.objects.filter(question = current_question[0], number = int(answer_num))
-                        choice_check = Choice.objects.get(question = current_question[0], number = int(answer_num))
-                        print('choice_selected=',choice_selected)
+                                if choice_check.correct == True :
+                                    add_score = 1
+                                else :
+                                    add_score = 0
+                                
+                                player_data = PlayerData(player = player[0], question = current_question[0] , choice_selected = choice_selected[0], score = add_score)
+                                player_data.save()
 
-                        if choice_check.correct == True :
-                            add_score = 1
-                        else :
-                            add_score = 0
-                        
-                        player_data = PlayerData(player = player[0], question = current_question[0] , choice_selected = choice_selected[0], score = add_score)
-                        player_data.save()
-                        if current_question[0].number == 1:
-                            question_thai = "๑"
-                        if current_question[0].number == 2:
-                            question_thai = "๒"
-                        if current_question[0].number == 3:
-                            question_thai = "๓"
-                        if current_question[0].number == 4:
-                            question_thai = "๔"
-                        if current_question[0].number == 5:
-                            question_thai = "๕"
-                        if current_question[0].number == 6:
-                            question_thai = "๖"
-                        if current_question[0].number == 7:
-                            question_thai = "๗"
-                        if current_question[0].number == 8:
-                            question_thai = "๘"
-                        if current_question[0].number == 9:
-                            question_thai = "๙"
-                        if current_question[0].number == 10:
-                            question_thai = "๑๐"
+                                question_thai = ThaiNum_convert(current_question[0].number)
 
-                        reply_text = f'ได้รับคำตอบของท่านแล้ว\n คำถามข้อที่ : {question_thai}\n ตัวเลือก : {answer} {choice_selected[0].answer}'    
+
+                                reply_text = f'ได้รับคำตอบของท่านแล้ว\n คำถามข้อที่ : {question_thai}\n ตัวเลือก : {answer}. {choice_selected[0].answer}'    
+                                text_message = TextSendMessage(reply_text)
+                                line_bot_api.reply_message(reply_token,text_message)
+                                return None  
+                            else:
+                                text_message = TextSendMessage("กรุณาเลือกคำตอบให้ถูกต้อง")
+                                line_bot_api.reply_message(reply_token,text_message)
+                                return None   
+
+                    else:
+                        question_thai = ThaiNum_convert(current_question[0].number)
+                        reply_text = f"ท่านตอบผิดข้อ คำถามปัจจุบันคือข้อ {question_thai}"
                         text_message = TextSendMessage(reply_text)
                         line_bot_api.reply_message(reply_token,text_message)
-                        return None     
-
-                    if answer not in ["ก","ข","ค","ง"] and player[0].state == StateChoice.FINISH:
-                        text_message = TextSendMessage("กรุณาเลือกคำตอบให้ถูกต้อง")
-                        line_bot_api.reply_message(reply_token,text_message)
-                        return None
+                else:
+                    text_message = TextSendMessage("กรุณาเลือกคำตอบให้ถูกต้อง")
+                    line_bot_api.reply_message(reply_token,text_message)
+                    return None
             else:
                 text_message = TextSendMessage(f"คุณยังไม่ได้ลงทะเบียน หรือ ลงทะเบียนไม่สมบูรณ์ กรุณาลงทะเบียนอีกครั้ง")
                 line_bot_api.reply_message(reply_token,text_message)
@@ -174,8 +215,10 @@ def GetAnswer(request):
 def Questions(request ,question_number = 0):
     display_q = Question.objects.all()
     if not request.user.is_superuser:
-        html = "<html><body><a href = '{% url 'register_check'%}'>ตรวจสอบรายชื่อผู้ลงทะเบียน</a></body></html>" 
-        return HttpResponse(html)
+        Players = Player.objects.values("unit").annotate(count=Count('unit'))
+        data = {"Players" : Players}
+        # return redirect('admin:index')
+        return render(request,'unit.html',data)
 
     # Send Ready
     if int(question_number) == 11:

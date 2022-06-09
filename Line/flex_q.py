@@ -118,7 +118,7 @@ def FlexQuestion (question_number):
     "type": "image",
     "url": question_img,
     "size": "full",
-    "aspectRatio": "20:15",
+    "aspectRatio": "26:15",
     "aspectMode": "cover",
   },
   "body": {
@@ -267,7 +267,7 @@ def FlexQuestion (question_number):
         "action": {
           "type": "message",
           "label": f"ตัวเลือก: {choice1}",
-          "text": choice1
+          "text": f"{choice1}-{question.number}"
         },
         "height": "sm",
         "style": "primary"
@@ -277,7 +277,7 @@ def FlexQuestion (question_number):
         "action": {
           "type": "message",
           "label": f"ตัวเลือก: {choice2}",
-          "text": choice2
+          "text": f"{choice2}-{question.number}"
         },
         "height": "sm",
         "style": "primary"
@@ -287,7 +287,7 @@ def FlexQuestion (question_number):
         "action": {
           "type": "message",
           "label": f"ตัวเลือก: {choice3}",
-          "text": choice3
+          "text": f"{choice3}-{question.number}"
         },
         "style": "primary"
       },
@@ -296,7 +296,7 @@ def FlexQuestion (question_number):
         "action": {
           "type": "message",
           "label": f"ตัวเลือก: {choice4}",
-          "text": choice4
+          "text": f"{choice4}-{question.number}"
         },
         "style": "primary"
       }

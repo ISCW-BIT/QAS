@@ -1,14 +1,10 @@
-from ast import And, Or
-from atexit import register
-import email
-from gettext import find
-import re
+from django.db.models import Count,Sum
 from django.shortcuts import render
 from pymysql import NULL
-from Line.views import LineAuthen
 from User.AFAuthentications import checkRTAFPassdword
 from django.http import HttpResponse
-from .models import Player
+from .models import Player,PlayerData
+from django.contrib.auth.decorators import login_required
 from Line.line_config import line_config_info
 
 from linebot.models import *
@@ -16,6 +12,20 @@ from linebot import *
 
 lineAPI = line_config_info()
 line_bot_api = LineBotApi(lineAPI["channel_access_token"])
+
+@login_required
+def DisplayUnits(request):
+    Players = Player.objects.values("unit").annotate(count=Count('unit'))
+    data = {"Players" : Players}
+    return render(request,'unit.html',data)
+
+def DisplayRanking(request):
+    scores = PlayerData.objects.values("score").aggregate(total=Sum('score'))
+    print(scores)
+    for score in scores:
+        print(score)
+    return render(request,'ranking.html')
+
 def RTAFLoginPage(request):
     return render(request, 'rtaf-login.html')
 
