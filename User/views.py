@@ -15,7 +15,7 @@ line_bot_api = LineBotApi(lineAPI["channel_access_token"])
 
 @login_required
 def DisplayUnits(request):
-    players = Player.objects.values("unit").annotate(count=Count('unit')).order_by('count')
+    players = Player.objects.values("unit").annotate(count=Count('unit')).order_by('-count')
     all_player = Player.objects.count()
     data = {"players" : players,
             "all_player": all_player}
