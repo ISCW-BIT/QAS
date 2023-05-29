@@ -70,7 +70,7 @@ WSGI_APPLICATION = 'QAS.wsgi.application'
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'linebot',
+         'NAME': 'qas',
          'USER': 'root',
          'PASSWORD': '',
          'HOST': 'localhost',
