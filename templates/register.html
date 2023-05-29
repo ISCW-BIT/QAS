@@ -105,7 +105,11 @@
                     </div>
                   </div>
               <div class="profile-card-ctr">
-                  <button  type="submit" class="profile-card__button button--blue js-message-btn">ลงทะเบียน</button>     
+                {% if action == "new_register"%}
+                  <button  type="submit" class="profile-card__button button--blue js-message-btn">ลงทะเบียน</button>   
+                {% else %}
+                <button  type="submit" class="profile-card__button button--blue js-message-btn">อัพเดทข้อมูล</button>
+                {% endif %}
               </div>
           </form>
         {% endif %}

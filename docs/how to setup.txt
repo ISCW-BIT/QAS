@@ -2,4 +2,4 @@
 	- line_config.py
 	- rich menu
 	- line liff Endpoint URL
-	- line messaging API
+	- line Webhook URL in messaging API

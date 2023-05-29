@@ -3,8 +3,9 @@ from django.shortcuts import render
 from pymysql import NULL
 from User.AFAuthentications import checkRTAFPassdword
 from django.http import HttpResponse
-from .models import Player,PlayerData
+from .models import Player,PlayerData,Raking
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg, Max, Min
 from Line.line_config import line_config_info
 
 from linebot.models import *
@@ -22,11 +23,10 @@ def DisplayUnits(request):
     return render(request,'unit.html',data)
 
 def DisplayRanking(request):
-    scores = PlayerData.objects.values("score").aggregate(total=Sum('score'))
-    print(scores)
-    for score in scores:
-        print(score)
-    return render(request,'ranking.html')
+    ranking = Player.objects.values("fullname","unit","score","time").order_by('-score','time')[:30]
+    data = {"rankings": ranking}
+    print("data = ",data)
+    return render(request,'ranking.html',data)
 
 def RTAFLoginPage(request):
     return render(request, 'rtaf-login.html')
@@ -77,8 +77,8 @@ def Register(request):
             update_info.unit = unit
             update_info.provide = provide
             update_info.address = address
+            update_info.state = 3
             update_info.save()
-            del request.session['user_line_id']
             return render(request,"register_done.html",data)
 
 

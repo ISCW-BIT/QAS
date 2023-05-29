@@ -8,7 +8,7 @@
     </div>
 
     <div class="profile-card__cnt js-profile-cnt">
-      <div class="profile-card__name">บุคลากรของหน่วยขึ้นตรง ทอ. ที่ร่วมกิจกรรม</div>
+      <div class="profile-card__name">จำนวนผู้ที่ร่วมกิจกรรม</div>
         {% comment %} <div class="profile-card-ctr">
             <a href="/admin/">
             <button class="profile-card__button button--blue js-message-btn">หน้าผู้ดูแลระบบ</button>
@@ -17,17 +17,17 @@
             <button class="profile-card__button button--blue js-message-btn">ลำดับคะแนน</button>
             </a>
         </div> {% endcomment %}
-        <p>ผู้เข้าร่วมกิจกรรม: {{all_player}} คน</p>
+        <p>ทั้งหมด: {{all_player}} คน</p>
         <div class="profile-card-loc">
               <table class="table table-light">
                   <thead >
                       <tr>
-                      <th scope="col">หน่วย</th>
+                      <th scope="col">กลุ่ม</th>
                       <th scope="col">จำนวนที่ลงทะเบียน</th>
                       </tr>
                   </thead>
                   <tbody>
-                      {% for player in players%}
+                      {% for player in players %}
                       <tr>
                           <td>{{player.unit}}</td>
                           <td>{{player.count}}</td>

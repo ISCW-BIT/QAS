@@ -46,13 +46,15 @@ def DisplayLineAuthen(request):
                 data = {
                         "is_rtaf_authen": lineAPI["is_rtaf_authen"],
                         "liff_id": lineAPI["liff_id"],
-                        "data": findPlayer[0]
+                        "data": findPlayer[0],
+                        "action": "update_info"
                         }
                 return render(request,'register.html',data)
         else:
             data = {
                     "is_rtaf_authen": lineAPI["is_rtaf_authen"],
-                    "liff_id": lineAPI["liff_id"]
+                    "liff_id": lineAPI["liff_id"],
+                    "action": "new_register"
                     }
             return render(request,'register.html',data)
     
@@ -157,23 +159,26 @@ def GetAnswer(request):
         reply_token = data['events'][0]['replyToken']
         current_question = Question.objects.filter(is_current = True)
 
-        if answer in ["พร้อม","ไม่พร้อม"]:
-            player = Player.objects.filter(line_id = user_id,state = StateChoice.FINISH)
-            if player.exists():
-                update_player = Player.objects.get(line_id = user_id,state = StateChoice.FINISH)
-                if answer == "พร้อม":
-                    update_player.ready = True
-                    update_player.save()
-                    text_message = TextSendMessage(f"คุณพร้อมร่วมกิจกรรมแล้ว กิจกรรมเริ่ม 13 มิ.ย. 65")
-                    line_bot_api.reply_message(reply_token,text_message)
-                if answer == "ไม่พร้อม":
-                    update_player.ready = False
-                    update_player.save()
-                    text_message = TextSendMessage(f"คุณจะไม่สามารถเข้าร่วมกิจกรรมตอบคำถามได้")
-                    line_bot_api.reply_message(reply_token,text_message)
-            else:
-                text_message = TextSendMessage(f"กรุณาลงทะเบียนให้ครบถ้วนก่อนร่วมกิจกรรมตอบคำถาม")
-                line_bot_api.reply_message(reply_token,text_message)
+        print("data = ",data)
+        print("answer = ",answer)
+
+        # if answer in ["พร้อม","ไม่พร้อม"]:
+        #     player = Player.objects.filter(line_id = user_id,state = StateChoice.FINISH)
+        #     if player.exists():
+        #         update_player = Player.objects.get(line_id = user_id,state = StateChoice.FINISH)
+        #         if answer == "พร้อม":
+        #             update_player.ready = True
+        #             update_player.save()
+        #             text_message = TextSendMessage(f"คุณพร้อมร่วมกิจกรรมแล้ว กิจกรรมเริ่ม 13 มิ.ย. 65")
+        #             line_bot_api.reply_message(reply_token,text_message)
+        #         if answer == "ไม่พร้อม":
+        #             update_player.ready = False
+        #             update_player.save()
+        #             text_message = TextSendMessage(f"คุณจะไม่สามารถเข้าร่วมกิจกรรมตอบคำถามได้")
+        #             line_bot_api.reply_message(reply_token,text_message)
+        #     else:
+        #         text_message = TextSendMessage(f"กรุณาลงทะเบียนให้ครบถ้วนก่อนร่วมกิจกรรมตอบคำถาม")
+        #         line_bot_api.reply_message(reply_token,text_message)
 
         if not current_question.exists():
             url = lineAPI["url_website"]
@@ -248,25 +253,28 @@ def GetAnswer(request):
 def Questions(request ,question_number = 0):
     display_q = Question.objects.all()
     if not request.user.is_superuser:
-        # return redirect('admin:index')
         return redirect('/units/')
 
-    # Send Ready
-    if int(question_number) == 11:
-        Send_Flex = FlexReady(question_number)
-        line_bot_api.broadcast(Send_Flex)
+    # # # Send Ready
+    # if int(question_number) == 11:
+    #     Send_Flex = FlexReady(question_number)
+    #     line_bot_api.broadcast(Send_Flex)
 
     # Send Question
     if int(question_number) <= 10:
-        if question_number != 0:
+        if question_number != 0 :
             Send_Flex = FlexQuestion(question_number)
-            player_ready = Player.objects.filter(ready = True)
-            for player in player_ready:
-                print(player.line_id)
-                line_bot_api.push_message(player.line_id,Send_Flex)
+            line_bot_api.broadcast(Send_Flex)
+
+            # player_ready = Player.objects.filter(ready = True)
+            # for player in player_ready:
+            #     print(player.line_id)
+            #     line_bot_api.push_message(player.line_id,Send_Flex)
+
             send_time = Question.objects.get(number = question_number)
             send_time.send_time = timezone.now()
             send_time.save()
+
             question = Question.objects.all()
             question.update (is_current = False) 
             question = Question.objects.filter(number = question_number)
