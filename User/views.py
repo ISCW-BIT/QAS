@@ -32,31 +32,57 @@ def RTAFLoginPage(request):
     return render(request, 'rtaf-login.html')
 
 def Register(request):
-    mobile = request.POST.get("mobile")
-    work_phone =  request.POST.get("work_phone")
-    rtaf_email = request.session['rtaf_email']
-    if mobile is not "" and work_phone is not "":
-        find_email = Player.objects.filter(email = rtaf_email)
-        if find_email:
-            InsertInfo = Player.objects.get(email = rtaf_email)
-            InsertInfo.mobile = mobile
-            InsertInfo.office_phone = work_phone
-            InsertInfo.state = 3
-            InsertInfo.save()
-            emoji = [
-                {
-                    "index": 30,
-                    "productId": "5ac21a18040ab15980c9b43e",
-                    "emojiId": "007"
-                }
-            ]
-            text_message = TextSendMessage(text='ท่านได้ลงทะเบียนเรียบร้อยแล้ว $ สามารถร่วมกิจกรรมตอบคำถาม ในวันจันทร์ที่ 13 มิถุนายน 2565 เวลา 1400', emojis=emoji)
-            user_line_id = Player.objects.filter(email = rtaf_email).values("line_id")
-            line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
-            del request.session['rtaf_email']
-            return render(request,"register_done.html")
+    if lineAPI["is_rtaf_authen"]:
+        mobile = request.POST.get("mobile")
+        work_phone =  request.POST.get("work_phone")
+        rtaf_email = request.session['rtaf_email']
+        if mobile != "" and work_phone != "":
+            find_email = Player.objects.filter(email = rtaf_email)
+            if find_email:
+                InsertInfo = Player.objects.get(email = rtaf_email)
+                InsertInfo.mobile = mobile
+                InsertInfo.office_phone = work_phone
+                InsertInfo.state = 3
+                InsertInfo.save()
+                emoji = [
+                    {
+                        "index": 30,
+                        "productId": "5ac21a18040ab15980c9b43e",
+                        "emojiId": "007"
+                    }
+                ]
+                text_message = TextSendMessage(text='ท่านได้ลงทะเบียนเรียบร้อยแล้ว $ สามารถร่วมกิจกรรมตอบคำถาม ในวันจันทร์ที่ 13 มิถุนายน 2565 เวลา 1400', emojis=emoji)
+                user_line_id = Player.objects.filter(email = rtaf_email).values("line_id")
+                line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
+                del request.session['rtaf_email']
+                return render(request,"register_done.html")
+        else:
+            return render(request,"rtaf-login.html")
     else:
-        return render(request,"rtaf-login.html")
+        user_line_id = request.session['user_line_id']
+        fullname = request.POST.get("fullname")
+        age = request.POST.get("age")
+        position = request.POST.get("position")
+        unit = request.POST.get("unit")
+        provide = request.POST.get("provide")
+        address = request.POST.get("address")
+        update_info = Player.objects.filter(line_id = user_line_id)
+        data = {"is_rtaf_authen": lineAPI["is_rtaf_authen"],
+                "line_url": lineAPI["line_url"]}
+        if update_info:
+            update_info = Player.objects.get(line_id = user_line_id)
+            update_info.fullname = fullname
+            update_info.age = age
+            update_info.position = position
+            update_info.unit = unit
+            update_info.provide = provide
+            update_info.address = address
+            update_info.save()
+            del request.session['user_line_id']
+            return render(request,"register_done.html",data)
+
+
+        
 
 def RTAFLogin(request):
     username = request.POST.get("username")
@@ -75,7 +101,7 @@ def RTAFLogin(request):
             request.session['rtaf_email'] = email
             if findPlayer:
                 data = {"data" : findPlayer[0]}
-                return render(request,'line-login.html',data)
+                return render(request,'register.html',data)
             else:
                 data = {"email" : email}
                 AddPlayer = Player.objects.create(line_id = "unknown",
@@ -85,7 +111,7 @@ def RTAFLogin(request):
                                                   unit = unit,
                                                   position = position,
                                                   state = state)
-                return render(request,'line-login.html',data)
+                return render(request,'register.html',data)
         else:
             data = {"message" : RTAFAuth['result']}
             print(data)

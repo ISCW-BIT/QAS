@@ -27,40 +27,78 @@ def DisplayLineDuplicate(request):
     return render(request,'line-duplicate.html')
 
 def DisplayLineAuthen(request):
-    if 'rtaf_email' in request.session:
-        email = request.session['rtaf_email']
-        findPlayer = Player.objects.filter(email = email)
-        data = {"data" : findPlayer[0]}
-        return render(request,'line-login.html',data)
-    else:
-        return render(request,'rtaf-login.html')
-def LineAuthen(request):
-    if request.method == 'POST':
-        user_line = request.POST.get("user_id")
-        rtaf_email = request.session['rtaf_email']
-        picture_url = request.POST.get("picture_url")
-        find_line_id = Player.objects.filter(line_id = user_line).values("line_id")
-        find_player = Player.objects.filter(email = rtaf_email)
-        
-        if find_line_id.exists():
-            my_line = Player.objects.filter(email = rtaf_email,line_id = find_line_id[0]['line_id'])
-            if my_line:
-                return HttpResponse(request.method)
-            else:
-                data = {"data": "line used by other"}
-                return JsonResponse(data)               
+    if lineAPI["is_rtaf_authen"]:
+        if 'rtaf_email' in request.session:
+            email = request.session['rtaf_email']
+            findPlayer = Player.objects.filter(email = email)
+            data = {
+                    "is_rtaf_authen":lineAPI["is_rtaf_authen"],
+                    "liff_id":lineAPI["liff_id"],
+                    "data" : findPlayer[0]
+                    }
+            return render(request,'register.html',data)
         else:
-            if find_player:
-                insert_line = Player.objects.get(email = rtaf_email)
-                insert_line.line_id = user_line
-                insert_line.img = picture_url
-                insert_line.state = 2
-                insert_line.save()
-                HttpResponse(request.method)           
-            else:
-                return HttpResponse(request.method)
+            return render(request,'rtaf-login.html')
     else:
-        return HttpResponse(request.method)
+        if 'user_line_id' in request.session:
+            findPlayer = Player.objects.filter(line_id = request.session['user_line_id'])
+            if findPlayer:
+                data = {
+                        "is_rtaf_authen": lineAPI["is_rtaf_authen"],
+                        "liff_id": lineAPI["liff_id"],
+                        "data": findPlayer[0]
+                        }
+                return render(request,'register.html',data)
+        else:
+            data = {
+                    "is_rtaf_authen": lineAPI["is_rtaf_authen"],
+                    "liff_id": lineAPI["liff_id"]
+                    }
+            return render(request,'register.html',data)
+    
+def LineAuthen(request):
+    if lineAPI["is_rtaf_authen"]:
+        if request.method == 'POST':
+            user_line = request.POST.get("user_id")
+            rtaf_email = request.session['rtaf_email']
+            picture_url = request.POST.get("picture_url")
+            find_line_id = Player.objects.filter(line_id = user_line).values("line_id")
+            find_player = Player.objects.filter(email = rtaf_email)
+            
+            if find_line_id.exists():
+                my_line = Player.objects.filter(email = rtaf_email,line_id = find_line_id[0]['line_id'])
+                if my_line:
+                    return HttpResponse(request.method)
+                else:
+                    data = {"data": "line used by other"}
+                    return JsonResponse(data)               
+            else:
+                if find_player:
+                    insert_line = Player.objects.get(email = rtaf_email)
+                    insert_line.line_id = user_line
+                    insert_line.img = picture_url
+                    insert_line.state = 2
+                    insert_line.save()
+                    HttpResponse(request.method)           
+                else:
+                    return HttpResponse(request.method)
+        else:
+            return HttpResponse(request.method)
+    else:
+        user_line = request.POST.get("user_line_id")
+        picture_url = request.POST.get("picture_url")
+        find_line_id = Player.objects.filter(line_id = user_line)
+        request.session['user_line_id'] = user_line
+        if find_line_id.exists():
+            data = {"data": "line already registered"}
+            return JsonResponse(data)      
+        else: 
+            add_player = Player.objects.create(line_id = user_line,
+                                               img = picture_url,
+                                               state = 2)
+            data = {"data": "line register successfully"}
+            return JsonResponse(data)      
+
 
 def arabic_convert(number):
     if number == "๑":

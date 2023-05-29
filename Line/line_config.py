@@ -1,13 +1,18 @@
+from User.models import Config
+
+# liff id = line_login.html,line-duplicate.html
+# liff endpoint
+# Webhook URL in Line Messaging API
+# line url = register_done.html 
 
 def line_config_info():
-    channel_access_token = "YxmCAeJNlD+g6gE647LgtzkBGqiqfMXN0Et4xXlD4q/LFxVC6NUGkhHHJN2I3zLnu38+iYYnlXZoD2a136pYxelg15QLuj0nZo5TrMxUxYYghFv1gSJ1sj19TmpBNz+rPRgICvF4qwXdZNFmgj5Q8wdB04t89/1O/w1cDnyilFU="
-    user_id = "Uf0a8d93552891bf4559fdb96073c91ff"
-    # liff id = line_login.html,line-duplicate.html
-    # liff endpoint
-    # Webhook URL in Line Messaging API
-    # line url = register_done.html 
-    url_website = "https://757f-122-155-138-34.ap.ngrok.io/"
-    line_data = {"channel_access_token":channel_access_token,
-    "user_id" : user_id,
-    "url_website": url_website}
+    config = Config.objects.all()
+    line_data = {   
+                    "channel_access_token":config[0].line_channel_access_token,
+                    "user_id" : config[0].line_user_id,
+                    "liff_id": config[0].line_liff_id,
+                    "url_website": config[0].url_website,
+                    "line_url": config[0].line_url,
+                    "is_rtaf_authen": config[0].is_rtaf_authen
+                }
     return line_data

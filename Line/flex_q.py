@@ -68,6 +68,7 @@ def FlexReady(question_number):
 }
     )
   return flex_message
+
 def FlexQuestion (question_number):
     question = Question.objects.get(number = question_number)
     question_text = str(question.name)

@@ -2,7 +2,7 @@ from pyexpat import model
 from django.contrib import admin
 from django.db.models import Sum,  Count
 from urllib3 import Retry
-from .models import Player,  Question, Choice, PlayerData, Raking
+from .models import Player,  Question, Choice, PlayerData, Raking,Config
 from import_export.admin import ImportExportActionModelAdmin
 
 
@@ -30,7 +30,12 @@ class PlayerData_Admin (admin.ModelAdmin):
 
 class Ranking_Admin(admin.ModelAdmin):
     list_display = ['fullname','total_score','time_score']
+    
+class ConfigAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
 admin.site.register(Raking,Ranking_Admin)
+admin.site.register(Config,ConfigAdmin)
 admin.site.register(Player, Player_Admin)
 
 admin.site.register(Choice, Choice_Admin)

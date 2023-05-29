@@ -13,37 +13,102 @@
 
     <div class="profile-card__cnt js-profile-cnt">
         <div class="profile-card__name" id="displayName"></div>
-        <form method="POST" action="/rtaf/register">
-            {% csrf_token %}
-            <div class="profile-card__txt">RTAF Email: <strong>{{ data.email }}@rtaf.mi.th</strong></div>
-            <div class="profile-card__txt">{{ data.rank }}{{ data.fullname }}</div>
-            <div class="profile-card__txt">สังกัด: {{ data.unit }}</div>
-            <div class="profile-card-inf">
-                <div class="row">
-                    <div class="col">
-                      {% if data.office_phone == None %}
-                        <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="หมายเลขมือถือ" pattern="[0-9]{10}" required>
-                      {% endif %}
-                      {% if data.office_phone != None %}
-                        <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="หมายเลขมือถือ" pattern="[0-9]{10}" value="{{data.mobile}}" required>
-                      {% endif %}
-                    </div>
-                    <div class="col">
+        {% if is_rtaf_authen %}
+          <form method="POST" action="/rtaf/register">
+              {% csrf_token %}
+              <div class="profile-card__txt">RTAF Email: <strong>{{ data.email }}@rtaf.mi.th</strong></div>
+              <div class="profile-card__txt">{{ data.rank }}{{ data.fullname }}</div>
+              <div class="profile-card__txt">สังกัด: {{ data.unit }}</div>
+              <div class="profile-card-inf">
+                  <div class="row">
+                      <div class="col">
                         {% if data.office_phone == None %}
-                          <input type="tel" class="form-control" id="work_phone" name="work_phone" 
-                          placeholder="เบอร์ 5 ตัว" pattern="[0-9]{5}" required>
+                          <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="หมายเลขมือถือ" pattern="[0-9]{10}" required>
                         {% endif %}
                         {% if data.office_phone != None %}
-                          <input type="tel" class="form-control" id="work_phone" name="work_phone" 
-                          placeholder="เบอร์ 5 ตัว" pattern="[0-9]{5}" value="{{data.office_phone}}" required>
+                          <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="หมายเลขมือถือ" pattern="[0-9]{10}" value="{{data.mobile}}" required>
                         {% endif %}
+                      </div>
+                      <div class="col">
+                          {% if data.office_phone == None %}
+                            <input type="tel" class="form-control" id="work_phone" name="work_phone" 
+                            placeholder="เบอร์ 5 ตัว" pattern="[0-9]{5}" required>
+                          {% endif %}
+                          {% if data.office_phone != None %}
+                            <input type="tel" class="form-control" id="work_phone" name="work_phone" 
+                            placeholder="เบอร์ 5 ตัว" pattern="[0-9]{5}" value="{{data.office_phone}}" required>
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+              <div class="profile-card-ctr">
+                  <button  type="submit" class="profile-card__button button--blue js-message-btn">ลงทะเบียน</button>     
+              </div>
+          </form>
+        {% else %}
+        <div class="profile-card__name">ลงทะเบียนเพื่อร่วมกิจกรรม</div>
+        <div class="profile-card__txt">กิจกรรมวันที่ระลึกคล้ายวันทิวงคต <strong>พระบิดาแห่งกองทัพอากาศ</strong></div>
+          <form method="POST" action="/rtaf/register">
+              {% csrf_token %}
+                  <div class="row">
+                      <div class="col">
+                        {% if data.fullname == None %}
+                          <input type="text" class="form-control" id="fullname" name="fullname" placeholder="ชื่อ-นามสกุล" required>
+                        {% else %}
+                        <input type="text" class="form-control" id="fullname" name="fullname" placeholder="ชื่อ-นามสกุล" value="{{data.fullname}}" required>                        
+                        {% endif %}
+                      </div>
+                  </div>
+                  <div class="row mt-1">
+                    <div class="col">
+                      {% if data.age == None %}
+                        <input type="tel" class="form-control" id="age" name="age" placeholder="อายุ" pattern="[0-9]{2}" required>
+                        {% else %}
+                        <input type="text" class="form-control" id="age" name="age" placeholder="อายุ" value="{{data.age}}" pattern="[0-9]{2}" required>                         
+                      {% endif %}
                     </div>
-                </div>
-            </div>
-            <div class="profile-card-ctr">
-                <button  type="submit" class="profile-card__button button--blue js-message-btn">ลงทะเบียน</button>     
-            </div>
-        </form>
+                  </div>
+                  <div class="row mt-1">
+                      <div class="col">
+                        {% if data.position == None %}
+                          <input type="text" class="form-control" id="position" name="position" placeholder="ระดับชั้น" required>
+                        {% else %}
+                          <input type="text" class="form-control" id="position" name="position" placeholder="ระดับชั้น" value="{{data.position}}" required>
+                        {% endif %}
+                      </div>
+                  </div>
+                  <div class="row mt-1">
+                      <div class="col">
+                        {% if data.unit == None %}
+                          <input type="text" class="form-control" id="unit" name="unit" placeholder="โรงเรียน" required>
+                        {% else %}
+                        <input type="text" class="form-control" id="unit" name="unit" placeholder="โรงเรียน" value="{{data.unit}}" required>                       
+                        {% endif %}
+                      </div>
+                  </div>
+                  <div class="row mt-1">
+                    <div class="col">
+                      {% if data.provide == None %}
+                        <input type="text" class="form-control" id="provide" name="provide" placeholder="จังหวัด" required>
+                      {%else %}
+                      <input type="text" class="form-control" id="provide" name="provide" placeholder="จังหวัด" value="{{data.provide}}" required>                    
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="row mt-1">
+                    <div class="col">
+                      {% if data.address == None %}
+                        <input type="text" class="form-control" id="address" name="address" placeholder="ที่อยู่สำหรับจัดส่งรางวัล" required>
+                      {% else %}
+                      <input type="text" class="form-control" id="address" name="address" placeholder="ที่อยู่สำหรับจัดส่งรางวัล"  value="{{data.address}}" required>                      
+                      {% endif %}
+                    </div>
+                  </div>
+              <div class="profile-card-ctr">
+                  <button  type="submit" class="profile-card__button button--blue js-message-btn">ลงทะเบียน</button>     
+              </div>
+          </form>
+        {% endif %}
     </div>
 </div>
 </div>
@@ -112,15 +177,16 @@
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var response = JSON.parse(this.response);
+                console.log(response["data"])
                 if(response["data"] == "line used by other")
                 {
                   window.location.replace("/line/duplicate")
                 }
             }
-        };
+        }
         xhttp.open("POST", "/line/liff", true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("user_id="+user_id+"&picture_url="+picture_url+"&csrfmiddlewaretoken={{ csrf_token }}");
+        xhttp.send("user_line_id="+user_id+"&picture_url="+picture_url+"&csrfmiddlewaretoken={{ csrf_token }}");
     }
     function runApp() {
       liff.getProfile().then(profile => {
@@ -133,7 +199,7 @@
         loadDoc(user_id,picture_url)
       }).catch();
     }
-    liff.init({ liffId: "1657196654-1m7xrmEm" }, () => {
+    liff.init({ liffId: "{{ liff_id }}" }, () => {
       if (liff.isLoggedIn()) {
         runApp()
       } else {

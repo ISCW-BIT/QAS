@@ -8,6 +8,14 @@ from django.contrib import admin
 from django.db.models import Sum,  Count
 
 
+class Config(models.Model):
+    name =  models.CharField(verbose_name='config name', max_length=25)
+    line_channel_access_token = models.TextField()
+    line_user_id = models.TextField()
+    line_liff_id = models.TextField()
+    line_url = models.TextField()
+    url_website = models.TextField()
+    is_rtaf_authen = models.BooleanField(verbose_name = "rtaf auth", default = False)
 
 class StateChoice(models.IntegerChoices):
     IDLE = 0, _('ยังไม่ได้ลงทะเบียน')
@@ -20,12 +28,15 @@ class Player(models.Model):
         verbose_name_plural = "ผู้ลงทะเบียน"
     line_id = models.CharField(verbose_name='Line ID', max_length=255)  
     fullname = models.CharField(verbose_name='ชื่อ-นามสกุล', max_length=255 ,blank=True , null = True)
+    age = models.CharField(verbose_name='อายุ', max_length=2 ,blank=True , null = True)
+    provide = models.CharField(verbose_name='จังหวัด', max_length=2 ,blank=True , null = True)
+    address = models.CharField(verbose_name='ที่อยู่', max_length=2 ,blank=True , null = True)
     rank = models.CharField(verbose_name='ยศ', max_length=255 ,blank=True , null = True)
-    unit = models.CharField(verbose_name='สังกัด', max_length=255 ,blank=True , null = True)
+    unit = models.CharField(verbose_name='สังกัด/โรงเรียน', max_length=255 ,blank=True , null = True)
     email = models.CharField(verbose_name='อีเมล์', max_length=255 ,blank=True , null = True)
     mobile = models.CharField(verbose_name='เบอร์มือถือ', max_length=10 ,blank=True , null = True)
     office_phone = models.CharField(verbose_name='เบอร์ที่ทำงาน', max_length=10 ,blank=True , null = True)
-    position = models.CharField(verbose_name='ตำแหน่ง', max_length=255 ,blank=True , null = True)
+    position = models.CharField(verbose_name='ตำแหน่ง/ระดับชั้น', max_length=255 ,blank=True , null = True)
     state = models.IntegerField(verbose_name = "สถานะ" ,choices = StateChoice.choices, default = StateChoice.IDLE)
     last_response = models.DateTimeField(auto_now = True)
     img = models.CharField(verbose_name='รูปภาพ', max_length=255, default="-")  
