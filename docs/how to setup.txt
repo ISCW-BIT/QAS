@@ -1,5 +1,5 @@
-1. Change url in 4 point
-	- line_config.py
-	- rich menu
-	- line liff Endpoint URL
-	- line Webhook URL in messaging API
+1. Setup config in 4 point
+	- Config on Model
+	- Website url on rich menu
+	- line liff Endpoint URL on Line Dev Login
+	- line Webhook URL on Line Dev messaging API

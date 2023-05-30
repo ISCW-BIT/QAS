@@ -79,6 +79,18 @@ def Register(request):
             update_info.address = address
             update_info.state = 3
             update_info.save()
+
+            emoji = [
+                {
+                    "index": 30,
+                    "productId": "5ac21a18040ab15980c9b43e",
+                    "emojiId": "007"
+                }
+            ]
+            text_message = TextSendMessage(text='ท่านได้ลงทะเบียนเรียบร้อยแล้ว $ สามารถร่วมกิจกรรมตอบคำถาม ในวันจันทร์ที่ 13 มิถุนายน 2565 เวลา 1400', emojis=emoji)
+            user_line_id = Player.objects.filter(line_id = user_line_id).values("line_id")
+            line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
+
             return render(request,"register_done.html",data)
 
 

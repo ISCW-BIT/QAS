@@ -152,8 +152,18 @@ def ThaiNum_convert(number):
 @csrf_exempt
 def GetAnswer(request):
     data = {}
+    print("data = ",data)
+
+
+    text_message = TextSendMessage(text=f'method GET = {data}')
+    line_bot_api.push_message("Ua8a60fa72a4ca7ea52e79d8803cb454b", text_message)
+    
     if request.method == 'POST':
-        data = json.loads(request.body.decode()) 
+        data = json.loads(request.body.decode())
+
+        text_message = TextSendMessage(text=f'method POST = {data}')
+        line_bot_api.push_message("Ua8a60fa72a4ca7ea52e79d8803cb454b", text_message)
+
         user_id = data['events'][0]['source']['userId']
         answer = data['events'][0]['message']['text']
         reply_token = data['events'][0]['replyToken']
