@@ -1,17 +1,27 @@
 from pathlib import Path
 import os
 import pymysql
+import sys
+import dj_database_url
+import environ
+from django.core.management.utils import get_random_secret_key
 
 pymysql.install_as_MySQLdb()
+env = environ.Env()
+environ.Env.read_env()
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-prrh+(pacdr5xg^otx%_pfvnp%=scus3-k@4#br3i60&laa!b%'
+# SECRET_KEY = 'django-insecure-prrh+(pacdr5xg^otx%_pfvnp%=scus3-k@4#br3i60&laa!b%'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
-DEBUG = True
+# DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
-ALLOWED_HOSTS = ['*','127.0.0.1','stellar-dynamics.com','www.stellar-dynamics.com','159.65.8.105']
+# ALLOWED_HOSTS = ['*','127.0.0.1','stellar-dynamics.com','www.stellar-dynamics.com','159.65.8.105']
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -66,16 +76,34 @@ WSGI_APPLICATION = 'QAS.wsgi.application'
 #      }
 # }
 
-## Local Database
-DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'qas',
-         'USER': 'root',
-         'PASSWORD': '',
-         'HOST': 'localhost',
-     }
-}
+# Local Database
+# DATABASES = {
+#      'default': {
+#          'ENGINE': 'django.db.backends.mysql',
+#          'NAME': 'qas',
+#          'USER': 'root',
+#          'PASSWORD': '',
+#          'HOST': 'localhost',
+#      }
+# }
+
+
+if DEVELOPMENT_MODE is True:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'qas',
+            'USER': 'root',
+            'PASSWORD': '',
+            'HOST': 'localhost',
+        }
+    }
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if os.getenv("DATABASE_URL", None) is None:
+        raise Exception("DATABASE_URL environment variable not defined")
+    DATABASES = {
+        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
