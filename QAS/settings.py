@@ -137,11 +137,13 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/register_check/'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-#STATICFILES_DIRS = ( os.path.join('static'), )
-# STATICFILES_DIRS = [
-#    BASE_DIR / 'static'
-# ]
+
+if DEVELOPMENT_MODE is True:
+    STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+    ]
+elif DEVELOPMENT_MODE is False:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = ''
