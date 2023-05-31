@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', LoginView.as_view(), name = 'login'),
     path('logout/', LogoutView.as_view(), name = 'logout'),  
-    # path('rtaf/',include('User.urls'),name = 'rtaf'),
+    path('rtaf/',include('User.urls'),name = 'rtaf'),
     path('line/',include('Line.urls'),name = 'line'),   
     path('units/',DisplayUnits,name = 'units'),
     path('ranking/',DisplayRanking,name = 'ranking'),

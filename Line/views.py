@@ -152,17 +152,9 @@ def ThaiNum_convert(number):
 @csrf_exempt
 def GetAnswer(request):
     data = {}
-    print("data = ",data)
 
-
-    text_message = TextSendMessage(text=f'method GET = {data}')
-    line_bot_api.push_message("Ua8a60fa72a4ca7ea52e79d8803cb454b", text_message)
-    
     if request.method == 'POST':
         data = json.loads(request.body.decode())
-
-        text_message = TextSendMessage(text=f'method POST = {data}')
-        line_bot_api.push_message("Ua8a60fa72a4ca7ea52e79d8803cb454b", text_message)
 
         user_id = data['events'][0]['source']['userId']
         answer = data['events'][0]['message']['text']
@@ -253,7 +245,7 @@ def GetAnswer(request):
                     line_bot_api.reply_message(reply_token,text_message)
                     return None
             else:
-                text_message = TextSendMessage(f"คุณยังไม่ได้ลงทะเบียน หรือ ลงทะเบียนไม่สมบูรณ์ กรุณาลงทะเบียนอีกครั้ง")
+                text_message = TextSendMessage(f"คุณยังไม่ได้ลงทะเบียน หรือ ลงทะเบียนไม่สมบูรณ์ กรุณาลงทะเบียนอีกครั้ง https://father66.com/line/auth")
                 line_bot_api.reply_message(reply_token,text_message)
 
     return HttpResponse(request.method)

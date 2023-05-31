@@ -13,8 +13,8 @@ environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECRET_KEY = 'django-insecure-prrh+(pacdr5xg^otx%_pfvnp%=scus3-k@4#br3i60&laa!b%'
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+SECRET_KEY = 'django-insecure-prrh+(pacdr5xg^otx%_pfvnp%=scus3-k@4#br3i60&laa!b%'
+# SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # DEBUG = True
 DEBUG = os.getenv("DEBUG", "False") == "True"
@@ -137,11 +137,11 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/register_check/'
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 #STATICFILES_DIRS = ( os.path.join('static'), )
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATICFILES_DIRS = [
-   BASE_DIR / 'static'
-]
+# STATICFILES_DIRS = [
+#    BASE_DIR / 'static'
+# ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = ''
