@@ -6,6 +6,14 @@ from User.models import Config
 # line url = register_done.html 
 
 def line_config_info():
+    # line_data = {   
+    #                 "channel_access_token":"",
+    #                 "user_id" : "",
+    #                 "liff_id": "",
+    #                 "url_website": "",
+    #                 "line_url": "",
+    #                 "is_rtaf_authen": ""
+    #             }
     config = Config.objects.all()
     if config.exists():
         line_data = {   
