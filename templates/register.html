@@ -62,9 +62,9 @@
                   <div class="row mt-1">
                     <div class="col">
                       {% if data.age == None %}
-                        <input type="tel" class="form-control" id="age" name="age" placeholder="อายุ" pattern="[0-9]{2}" required>
+                        <input type="tel" class="form-control" id="age" name="age" placeholder="อายุ (เฉพาะตัวเลขเท่านั้น)" pattern="[0-9]{2}" required>
                         {% else %}
-                        <input type="text" class="form-control" id="age" name="age" placeholder="อายุ" value="{{data.age}}" pattern="[0-9]{2}" required>                         
+                        <input type="text" class="form-control" id="age" name="age" placeholder="อายุ (เฉพาะตัวเลขเท่านั้น)" value="{{data.age}}" pattern="[0-9]{2}" required>                         
                       {% endif %}
                     </div>
                   </div>
