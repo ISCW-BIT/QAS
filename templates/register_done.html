@@ -1,7 +1,7 @@
 {% extends "_loginbase.html"%}
 {% load static %}
 {% block content %}
-<meta http-equiv="REFRESH" content="0;url={{line_url}}">
+{% comment %} <meta http-equiv="REFRESH" content="0;url={{line_url}}"> {% endcomment %}
 <div class="wrapper">
   <div class="profile-card js-profile-card">
     <div class="profile-card__img">
@@ -9,14 +9,17 @@
     </div>
 
     <div class="profile-card__cnt js-profile-cnt">
-      <div class="profile-card__name">ลงทะเบียนเรียบร้อยแล้ว</div>
-      <div class="profile-card__txt">กิจกรรมวันที่ระลึกคล้ายวันทิวงคต <strong>พระบิดาแห่งกองทัพอากาศ</strong></div>
       <div class="profile-card-loc">
         <span class="profile-card-loc__icon">
           <svg class="icon"><use xlink:href="#icon-location"></use></svg>
         </span>
       </div>
-
+      <div class="profile-card__name">ลงทะเบียนเรียบร้อยแล้ว</div>
+      <div class="profile-card__txt"><strong> เริ่มกิจกรรมตอบคำถามในวันอังคารที่ 13 มิถุนายน 2566 เวลา 16.00 - 17.00</strong></div>
+      <div class="profile-card__txt">คำถามจะถูกส่งผ่านทางไลน์ <strong>Father of the RTAF66</strong> แอดเพื่อนเพื่อรับคำถามและร่วมกิจกรรม</div>
+      <a href="{{line_url}}">
+        <button  type="submit" class="profile-card__button js-message-btn" style="background-color:green">แอดไลน์</button> 
+      </a>  
     </div>
 
     <div class="profile-card-message js-message">

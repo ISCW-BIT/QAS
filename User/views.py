@@ -1,5 +1,6 @@
 from django.db.models import Count,Sum
 from django.shortcuts import render
+from django.shortcuts import redirect
 from pymysql import NULL
 from User.AFAuthentications import checkRTAFPassdword
 from django.http import HttpResponse
@@ -51,7 +52,7 @@ def Register(request):
                         "emojiId": "007"
                     }
                 ]
-                text_message = TextSendMessage(text='ท่านได้ลงทะเบียนเรียบร้อยแล้ว $ สามารถร่วมกิจกรรมตอบคำถาม ในวันจันทร์ที่ 13 มิถุนายน 2565 เวลา 1400', emojis=emoji)
+                text_message = TextSendMessage(text='ท่านได้ลงทะเบียนเรียบร้อยแล้ว $ สามารถร่วมกิจกรรมตอบคำถาม ในวันอังคารที่ 13 มิถุนายน 2566 เวลา 16.00 - 17.00', emojis=emoji)
                 user_line_id = Player.objects.filter(email = rtaf_email).values("line_id")
                 line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
                 del request.session['rtaf_email']
@@ -59,39 +60,46 @@ def Register(request):
         else:
             return render(request,"rtaf-login.html")
     else:
-        user_line_id = request.session['user_line_id']
-        fullname = request.POST.get("fullname")
-        age = request.POST.get("age")
-        position = request.POST.get("position")
-        unit = request.POST.get("unit")
-        provide = request.POST.get("provide")
-        address = request.POST.get("address")
-        update_info = Player.objects.filter(line_id = user_line_id)
-        data = {"is_rtaf_authen": lineAPI["is_rtaf_authen"],
-                "line_url": lineAPI["line_url"]}
-        if update_info:
-            update_info = Player.objects.get(line_id = user_line_id)
-            update_info.fullname = fullname
-            update_info.age = age
-            update_info.position = position
-            update_info.unit = unit
-            update_info.provide = provide
-            update_info.address = address
-            update_info.state = 3
-            update_info.save()
+        if 'user_line_id' in request.session:
+            user_line_id = request.session['user_line_id']
+            fullname = request.POST.get("fullname")
+            age = request.POST.get("age")
+            position = request.POST.get("position")
+            unit = request.POST.get("unit")
+            provide = request.POST.get("provide")
+            address = request.POST.get("address")
+            if fullname is not None and age is not None and position is not None and unit is not None and provide is not None and address is not None:
+                update_info = Player.objects.filter(line_id = user_line_id)
+                data = {"is_rtaf_authen": lineAPI["is_rtaf_authen"],
+                        "line_url": lineAPI["line_url"]}
+                if update_info:
+                    update_info = Player.objects.get(line_id = user_line_id)
+                    update_info.fullname = fullname
+                    update_info.age = age
+                    update_info.position = position
+                    update_info.unit = unit
+                    update_info.provide = provide
+                    update_info.address = address
+                    update_info.state = 3
+                    update_info.save()
 
-            emoji = [
-                {
-                    "index": 30,
-                    "productId": "5ac21a18040ab15980c9b43e",
-                    "emojiId": "007"
-                }
-            ]
-            text_message = TextSendMessage(text='ท่านได้ลงทะเบียนเรียบร้อยแล้ว $ สามารถร่วมกิจกรรมตอบคำถาม ในวันจันทร์ที่ 13 มิถุนายน 2565 เวลา 1400', emojis=emoji)
-            user_line_id = Player.objects.filter(line_id = user_line_id).values("line_id")
-            line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
-
-            return render(request,"register_done.html",data)
+                    emoji = [
+                        {
+                            "index": 30,
+                            "productId": "5ac21a18040ab15980c9b43e",
+                            "emojiId": "007"
+                        }
+                    ]
+                    text_message = TextSendMessage(text=f'ท่านได้ลงทะเบียนเรียบร้อยแล้ว $ สามารถร่วมกิจกรรมตอบคำถาม ในวันอังคารที่ 13 มิถุนายน 2566 เวลา 16.00 - 17.00', emojis=emoji)
+                    user_line_id = Player.objects.filter(line_id = user_line_id).values("line_id")
+                    line_bot_api.push_message(user_line_id[0]["line_id"], text_message)
+                    return render(request,"register_done.html",data)
+                else:
+                    return redirect("/line/auth")
+            else:
+                return redirect("/line/auth")
+        else:
+            return redirect("/line/auth")
 
 
         

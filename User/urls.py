@@ -8,8 +8,8 @@ from .views import RTAFLoginPage,RTAFLogin,Register
 
 app_name = 'User'
 urlpatterns = [
-    path('',RTAFLoginPage,name = "rtaf-login"),
-    path('auth',RTAFLogin,name = "authentication"),
+    # path('',RTAFLoginPage,name = "rtaf-login"),
+    # path('auth',RTAFLogin,name = "authentication"),
     path('register',Register,name = "register"),
 
     
