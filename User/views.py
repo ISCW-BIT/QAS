@@ -24,7 +24,7 @@ def DisplayUnits(request):
     return render(request,'unit.html',data)
 
 def DisplayRanking(request):
-    ranking = Player.objects.values("fullname","unit","score","time").order_by('-score','time')[:30]
+    ranking = Player.objects.values("fullname","unit","score","time").exclude(time=0).order_by('-score','time')[:30]
     data = {"rankings": ranking}
     print("data = ",data)
     return render(request,'ranking.html',data)
