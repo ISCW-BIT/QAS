@@ -68,6 +68,7 @@ def Register(request):
             unit = request.POST.get("unit")
             provide = request.POST.get("provide")
             address = request.POST.get("address")
+            mobile = request.POST.get("mobile")
             if fullname is not None and age is not None and position is not None and unit is not None and provide is not None and address is not None:
                 update_info = Player.objects.filter(line_id = user_line_id)
                 data = {"is_rtaf_authen": lineAPI["is_rtaf_authen"],
@@ -80,6 +81,7 @@ def Register(request):
                     update_info.unit = unit
                     update_info.provide = provide
                     update_info.address = address
+                    update_info.mobile = mobile
                     update_info.state = 3
                     update_info.save()
 

@@ -104,6 +104,15 @@
                       {% endif %}
                     </div>
                   </div>
+                  <div class="row mt-1">
+                    <div class="col">
+                      {% if data.mobile == None %}
+                      <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="หมายเลขมือถือ" pattern="[0-9]{10}" required>
+                      {% else %}
+                      <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="หมายเลขมือถือ" pattern="[0-9]{10}" value="{{data.mobile}}" required>                   
+                      {% endif %}
+                    </div>
+                  </div>
               <div class="profile-card-ctr">
                 {% if action == "new_register"%}
                   <button  type="submit" class="profile-card__button button--blue js-message-btn">ลงทะเบียน</button>   

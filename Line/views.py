@@ -184,7 +184,7 @@ def GetAnswer(request):
 
         if not current_question.exists():
             url = lineAPI["url_website"]
-            text_message = TextSendMessage(f"กิจกรรมส่งเสริมการศึกษาพระประวัติและพระกรณียกิจพระบิดาแห่งกองทัพอากาศ เริ่มกิจกรรมตอบคำถามในวันอังคารที่ 13 มิถุนายน 2566 เวลา 16.00 - 17.00 สามารถลงทะเบียนได้ที่: {url}/line/auth ")
+            text_message = TextSendMessage(f"กิจกรรมส่งเสริมการศึกษาพระประวัติและพระกรณียกิจพระบิดาแห่งกองทัพอากาศ เริ่มกิจกรรมตอบคำถามในวันอังคารที่ 13 มิถุนายน 2566 เวลา 16.00 - 17.00 สามารถลงทะเบียนได้ที่: {url}line/auth ")
             line_bot_api.reply_message(reply_token,text_message)
 
         if current_question.exists():
