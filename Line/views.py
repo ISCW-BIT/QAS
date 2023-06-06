@@ -50,6 +50,13 @@ def DisplayLineAuthen(request):
                         "action": "update_info"
                         }
                 return render(request,'register.html',data)
+            else:
+                data = {
+                    "is_rtaf_authen": lineAPI["is_rtaf_authen"],
+                    "liff_id": lineAPI["liff_id"],
+                    "action": "new_register"
+                    }
+                return render(request,'register.html',data)
         else:
             data = {
                     "is_rtaf_authen": lineAPI["is_rtaf_authen"],
